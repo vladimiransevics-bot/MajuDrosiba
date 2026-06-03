@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: majudrosiba
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /data/majudrosiba.sqlite
+      - key: EMAIL_TO
+        value: vladimir.ansevics@gmail.com
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+    disk:
+      name: majudrosiba-data
+      mountPath: /data
+      sizeGB: 1
