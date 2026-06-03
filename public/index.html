@@ -6,15 +6,13 @@
   <title>MAJUDROSIBA — Drošības risinājumi Rīgā</title>
   <meta name="description" content="Profesionāli drošības risinājumi Rīgā un Pierīgā — videonovērošana, piekļuves kontrole, viedās slēdzenes, seifi, ugunsdrošība, metāla durvis. 15+ gadu pieredze.">
   <meta name="theme-color" content="#050d1a">
-
   <meta property="og:title" content="MAJUDROSIBA — Drošības risinājumi Rīgā">
-  <meta property="og:description" content="Videonovērošana, piekļuves kontrole, viedās slēdzenes, seifi un metāla durvis. 15+ gadu pieredze. Rīga un Pierīga.">
+  <meta property="og:description" content="Videonovērošana, piekļuves kontrole, viedās slēdzenes, seifi un metāla durvis. 15+ gadu pieredze.">
   <meta property="og:type" content="website">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="css/styles.css">
 
   <script type="application/ld+json">
@@ -22,11 +20,10 @@
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "MAJUDROSIBA",
-    "description": "Profesionāli drošības risinājumi Rīgā — videonovērošana, piekļuves kontrole, viedās slēdzenes, seifi, ugunsdrošība un metāla durvis.",
+    "description": "Profesionāli drošības risinājumi Rīgā",
     "telephone": "+37127221212",
     "email": "vladimir.ansevics@gmail.com",
     "areaServed": ["Rīga", "Jūrmala", "Mārupe", "Ķekava", "Olaine", "Salaspils"],
-    "priceRange": "€€",
     "openingHours": ["Mo-Fr 08:00-20:00", "Sa-Su 09:00-18:00"]
   }
   </script>
@@ -36,7 +33,7 @@
   <!-- HEADER -->
   <header class="header" id="header">
     <div class="container header-inner">
-      <a href="#" class="header-logo">
+      <a href="index.html" class="header-logo">
         <span class="logo-icon">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <rect x="3" y="13" width="22" height="13" rx="3" fill="#f5a623"/>
@@ -47,30 +44,41 @@
         <span class="logo-text">MĀJU<strong>DROŠĪBA</strong></span>
       </a>
 
-      <nav class="header-nav" aria-label="Galvenā navigācija">
-        <a href="#services">Pakalpojumi</a>
-        <a href="#why">Par mums</a>
-        <a href="#contact">Kontakti</a>
+      <nav class="header-nav">
+        <a href="#services" data-i18n="nav_services">Pakalpojumi</a>
+        <a href="#why" data-i18n="nav_about">Par mums</a>
+        <a href="shop.html" data-i18n="nav_shop">Veikals</a>
+        <a href="#contact" data-i18n="nav_contact">Kontakti</a>
       </nav>
 
-      <a href="tel:+37127221212" class="btn btn-primary header-phone">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-        </svg>
-        27-22-12-12
-      </a>
-
-      <button class="header-burger" id="burger" aria-label="Atvērt izvēlni" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="header-right">
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="lv">LV</button>
+          <button class="lang-btn" data-lang="ru">RU</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <a href="tel:+37127221212" class="btn btn-primary header-phone">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          27-22-12-12
+        </a>
+        <button class="header-burger" id="burger" aria-label="Izvēlne" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
   <!-- MOBILE NAV -->
   <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
-    <a href="#services" class="mobile-nav-link">Pakalpojumi</a>
-    <a href="#why" class="mobile-nav-link">Par mums</a>
-    <a href="#contact" class="mobile-nav-link">Kontakti</a>
+    <a href="#services" class="mobile-nav-link" data-i18n="nav_services">Pakalpojumi</a>
+    <a href="#why" class="mobile-nav-link" data-i18n="nav_about">Par mums</a>
+    <a href="shop.html" class="mobile-nav-link" data-i18n="nav_shop">Veikals</a>
+    <a href="#contact" class="mobile-nav-link" data-i18n="nav_contact">Kontakti</a>
+    <div class="mobile-lang">
+      <button class="lang-btn" data-lang="lv">LV</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
     <a href="tel:+37127221212" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
       Zvanīt 27-22-12-12
     </a>
@@ -81,25 +89,25 @@
     <div class="hero-bg"></div>
     <div class="container hero-content">
       <div class="hero-text">
-        <p class="hero-label">Rīga &amp; Pierīga</p>
-        <h1 class="hero-title">Māju drošība,<br>kurai var uzticēties</h1>
-        <p class="hero-sub">Videonovērošana, piekļuves kontrole, viedās slēdzenes un metāla durvis. Profesionāla uzstādīšana ar garantiju.</p>
+        <p class="hero-label" data-i18n="hero_label">Rīga &amp; Pierīga</p>
+        <h1 class="hero-title" data-i18n="hero_title">Māju drošība,<br>kurai var uzticēties</h1>
+        <p class="hero-sub" data-i18n="hero_sub">Videonovērošana, piekļuves kontrole, viedās slēdzenes un metāla durvis. Profesionāla uzstādīšana ar garantiju.</p>
         <div class="hero-actions">
-          <a href="#contact" class="btn btn-primary btn-lg">Sazināties</a>
-          <a href="#services" class="btn btn-ghost btn-lg">Skatīt pakalpojumus</a>
+          <a href="#contact" class="btn btn-primary btn-lg" data-i18n="hero_cta_contact">Sazināties</a>
+          <a href="#services" class="btn btn-ghost btn-lg" data-i18n="hero_cta_services">Skatīt pakalpojumus</a>
         </div>
         <div class="hero-badges">
           <div class="hero-badge">
             <strong>15+</strong>
-            <span>gadu pieredze</span>
+            <span data-i18n="hero_badge_exp">gadu pieredze</span>
           </div>
           <div class="hero-badge">
             <strong>218+</strong>
-            <span>apmierināti klienti</span>
+            <span data-i18n="hero_badge_clients">apmierināti klienti</span>
           </div>
           <div class="hero-badge">
             <strong>4.9★</strong>
-            <span>vidējais vērtējums</span>
+            <span data-i18n="hero_badge_rating">vidējais vērtējums</span>
           </div>
         </div>
       </div>
@@ -109,125 +117,94 @@
   <!-- SERVICES -->
   <section class="services" id="services">
     <div class="container">
-      <h2 class="section-title">Pakalpojumi</h2>
-      <p class="section-sub">Pilns drošības risinājumu klāsts jūsu mājai un uzņēmumam</p>
+      <h2 class="section-title" data-i18n="services_title">Pakalpojumi</h2>
+      <p class="section-sub" data-i18n="services_sub">Pilns drošības risinājumu klāsts jūsu mājai un uzņēmumam</p>
       <div class="services-grid">
 
-        <div class="service-card">
+        <a href="services/video.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14"/>
-              <rect x="2" y="7" width="13" height="10" rx="2"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14"/><rect x="2" y="7" width="13" height="10" rx="2"/></svg>
           </div>
-          <h3 class="service-title">Videonovērošana</h3>
-          <p class="service-desc">Analogās un IP kameras, ierakstu sistēmas, attālā pārraudzība 24/7. Uzstādīšana dzīvokļos, mājās un uzņēmumos.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_video_title">Videonovērošana</h3>
+          <p class="service-desc" data-i18n="svc_video_desc">Analogās un IP kameras, ierakstu sistēmas, attālā pārraudzība 24/7.</p>
+        </a>
 
-        <div class="service-card">
+        <a href="services/access-control.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="5" width="20" height="14" rx="2"/>
-              <circle cx="8" cy="12" r="2"/>
-              <path d="M14 10h4M14 14h2"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h2"/></svg>
           </div>
-          <h3 class="service-title">Piekļuves kontrole</h3>
-          <p class="service-desc">Elektroniskās slēdzenes, kodu paneļi, karšu lasītāji un biometriskie sistēmas ēkām un birojiem.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_access_title">Piekļuves kontrole</h3>
+          <p class="service-desc" data-i18n="svc_access_desc">Elektroniskās slēdzenes, kodu paneļi, karšu lasītāji un biometriskie sistēmas.</p>
+        </a>
 
-        <div class="service-card">
+        <a href="services/smart-locks.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="5" y="11" width="14" height="10" rx="2"/>
-              <path d="M8 11V7a4 4 0 018 0v4"/>
-              <circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/>
-              <path d="M8.5 4.5c.5-.8 1.5-1.5 3-1.5M17 7.5c.3.7.5 1.5.5 2.5" opacity=".5"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/></svg>
           </div>
-          <h3 class="service-title">Viedās slēdzenes</h3>
-          <p class="service-desc">Tedee, Yale un citu ražotāju viedās slēdzenes ar telefona, koda vai kartes piekļuvi. Uzstādīšana un konfigurēšana.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_smart_title">Viedās slēdzenes</h3>
+          <p class="service-desc" data-i18n="svc_smart_desc">Tedee, Yale un citu ražotāju viedās slēdzenes ar telefona, koda vai kartes piekļuvi.</p>
+        </a>
 
-        <div class="service-card">
+        <a href="services/safes.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="18" rx="2"/>
-              <circle cx="12" cy="12" r="4"/>
-              <path d="M12 8v1M12 15v1M8 12H7M17 12h-1"/>
-              <path d="M20 7h2M20 17h2"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 8v1M12 15v1M8 12H7M17 12h-1"/><path d="M20 7h2M20 17h2"/></svg>
           </div>
-          <h3 class="service-title">Seifi</h3>
-          <p class="service-desc">Mājas un biroja seifi naudas, dokumentu un vērtīgu priekšmetu glabāšanai. Uzstādīšana, atvēršana un remonts.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_safe_title">Seifi</h3>
+          <p class="service-desc" data-i18n="svc_safe_desc">Mājas un biroja seifi naudas, dokumentu un vērtīgu priekšmetu glabāšanai.</p>
+        </a>
 
-        <div class="service-card">
+        <a href="services/fire-alarm.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2c0 0-5.5 5-5.5 10.5a5.5 5.5 0 0011 0C17.5 7 12 2 12 2z"/>
-              <path d="M12 7c0 0-2.5 2.5-2.5 5.5a2.5 2.5 0 005 0C14.5 9.5 12 7 12 7z" opacity=".5"/>
-              <path d="M8 21h8M12 18v3"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-5.5 5-5.5 10.5a5.5 5.5 0 0011 0C17.5 7 12 2 12 2z"/><path d="M12 7c0 0-2.5 2.5-2.5 5.5a2.5 2.5 0 005 0C14.5 9.5 12 7 12 7z" opacity=".5"/></svg>
           </div>
-          <h3 class="service-title">Ugunsdrošības signalizācija</h3>
-          <p class="service-desc">Dūmu detektori, automātiskā signalizācija un brīdinājuma sistēmas dzīvojamām un komerciālām ēkām.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_fire_title">Ugunsdrošības signalizācija</h3>
+          <p class="service-desc" data-i18n="svc_fire_desc">Dūmu detektori, automātiskā signalizācija un brīdinājuma sistēmas.</p>
+        </a>
 
-        <div class="service-card">
+        <a href="services/metal-doors.html" class="service-card">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 21h18"/>
-              <path d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/>
-              <path d="M9 21v-4a3 3 0 016 0v4"/>
-              <circle cx="16" cy="11" r="1.2" fill="currentColor" stroke="none"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/><path d="M9 21v-4a3 3 0 016 0v4"/><circle cx="16" cy="11" r="1.2" fill="currentColor" stroke="none"/></svg>
           </div>
-          <h3 class="service-title">Metāla durvis</h3>
-          <p class="service-desc">Drošas metāla ieejas durvis ar sertificētām slēdzenēm. Uzstādīšana, remonts un nomaiņa privātmājām un dzīvokļiem.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_doors_title">Metāla durvis</h3>
+          <p class="service-desc" data-i18n="svc_doors_desc">Drošas metāla ieejas durvis ar sertificētām slēdzenēm. Uzstādīšana un remonts.</p>
+        </a>
 
-        <div class="service-card service-card--wide">
+        <a href="services/locks.html" class="service-card service-card--wide">
           <div class="service-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="11" width="16" height="11" rx="2"/>
-              <path d="M8 11V7a4 4 0 018 0v4"/>
-              <path d="M12 15v2"/>
-              <circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="11" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/></svg>
           </div>
-          <h3 class="service-title">Mehāniskās un elektroniskās slēdzenes</h3>
-          <p class="service-desc">Augstas drošības mehāniskās un elektroniskās slēdzenes. Uzstādīšana, remonts, atslēgu izgatavošana un atvēršana avārijas situācijās.</p>
-        </div>
+          <h3 class="service-title" data-i18n="svc_locks_title">Mehāniskās un elektroniskās slēdzenes</h3>
+          <p class="service-desc" data-i18n="svc_locks_desc">Augstas drošības mehāniskās un elektroniskās slēdzenes. Uzstādīšana, remonts, atslēgu izgatavošana.</p>
+        </a>
 
       </div>
     </div>
   </section>
 
-  <!-- WHY US -->
+  <!-- WHY -->
   <section class="why" id="why">
     <div class="container">
-      <h2 class="section-title">Kāpēc izvēlēties mūs</h2>
+      <h2 class="section-title" data-i18n="why_title">Kāpēc izvēlēties mūs</h2>
       <div class="why-grid">
         <div class="why-item">
           <div class="why-num">15+</div>
-          <div class="why-label">gadu pieredze drošības jomā</div>
+          <div class="why-label" data-i18n="why_exp">gadu pieredze drošības jomā</div>
         </div>
         <div class="why-item">
           <div class="why-num">218+</div>
-          <div class="why-label">apmierināti klienti</div>
+          <div class="why-label" data-i18n="why_clients">apmierināti klienti</div>
         </div>
         <div class="why-item">
           <div class="why-num">4.9★</div>
-          <div class="why-label">vidējais klientu vērtējums</div>
+          <div class="why-label" data-i18n="why_rating">vidējais klientu vērtējums</div>
         </div>
         <div class="why-item">
-          <div class="why-num">Garantija</div>
-          <div class="why-label">uz visiem uzstādīšanas darbiem</div>
+          <div class="why-num" data-i18n="why_guarantee_label">Garantija</div>
+          <div class="why-label" data-i18n="why_guarantee">uz visiem uzstādīšanas darbiem</div>
         </div>
       </div>
       <div class="why-desc">
-        <p>Sniedzam pakalpojumus <strong>Rīgā, Jūrmalā, Mārupē, Ķekavā, Olainē un Salaspilī</strong>. Strādājam gan ar privātpersonām, gan uzņēmumiem. Katrs projekts tiek īstenots profesionāli un rūpīgi.</p>
+        <p data-i18n="why_region">Sniedzam pakalpojumus <strong>Rīgā, Jūrmalā, Mārupē, Ķekavā, Olainē un Salaspilī</strong>.</p>
       </div>
     </div>
   </section>
@@ -235,61 +212,58 @@
   <!-- CONTACT -->
   <section class="contact" id="contact">
     <div class="container">
-      <h2 class="section-title">Kontakti</h2>
+      <h2 class="section-title" data-i18n="contact_title">Kontakti</h2>
       <div class="contact-grid">
-
         <div class="contact-card">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-            </svg>
-          </div>
-          <h3>Tālrunis</h3>
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <h3 data-i18n="contact_phone">Tālrunis</h3>
           <a href="tel:+37127221212" class="contact-link">27-22-12-12</a>
         </div>
-
         <div class="contact-card">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
-          <h3>E-pasts</h3>
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h3 data-i18n="contact_email">E-pasts</h3>
           <a href="mailto:vladimir.ansevics@gmail.com" class="contact-link">vladimir.ansevics@gmail.com</a>
         </div>
-
         <div class="contact-card">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12,6 12,12 16,14"/>
-            </svg>
-          </div>
-          <h3>Darba laiks</h3>
-          <p>Pirmdiena–Piektdiena: 8:00–20:00</p>
-          <p>Sestdiena–Svētdiena: 9:00–18:00</p>
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+          <h3 data-i18n="contact_hours">Darba laiks</h3>
+          <p data-i18n="contact_hours_week">Pirmdiena–Piektdiena: 8:00–20:00</p>
+          <p data-i18n="contact_hours_weekend">Sestdiena–Svētdiena: 9:00–18:00</p>
         </div>
-
         <div class="contact-card">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-          </div>
-          <h3>Apkalpojamais reģions</h3>
-          <p>Rīga, Jūrmala, Mārupe,<br>Ķekava, Olaine, Salaspils</p>
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <h3 data-i18n="contact_region">Apkalpojamais reģions</h3>
+          <p data-i18n="contact_region_text">Rīga, Jūrmala, Mārupe,<br>Ķekava, Olaine, Salaspils</p>
         </div>
+      </div>
 
+      <div class="contact-form-wrap">
+        <h3 class="contact-form-title" data-i18n="contact_form_title">Rakstiet mums</h3>
+        <form class="contact-form" id="contact-form">
+          <div class="form-row">
+            <input type="text" name="name" required data-i18n-placeholder="contact_form_name" placeholder="Vārds">
+            <input type="tel" name="phone" required data-i18n-placeholder="contact_form_phone" placeholder="Tālrunis">
+          </div>
+          <select name="service">
+            <option value="">— <span data-i18n="contact_form_service">Pakalpojums</span> —</option>
+            <option value="video" data-i18n="svc_video_title">Videonovērošana</option>
+            <option value="access-control" data-i18n="svc_access_title">Piekļuves kontrole</option>
+            <option value="smart-locks" data-i18n="svc_smart_title">Viedās slēdzenes</option>
+            <option value="safes" data-i18n="svc_safe_title">Seifi</option>
+            <option value="fire-alarm" data-i18n="svc_fire_title">Ugunsdrošības signalizācija</option>
+            <option value="metal-doors" data-i18n="svc_doors_title">Metāla durvis</option>
+            <option value="locks" data-i18n="svc_locks_title">Slēdzenes</option>
+          </select>
+          <textarea name="message" rows="4" data-i18n-placeholder="contact_form_message" placeholder="Ziņojums"></textarea>
+          <button type="submit" class="btn btn-primary btn-lg" data-i18n="contact_form_send">Nosūtīt</button>
+          <p class="form-status" id="form-status"></p>
+        </form>
       </div>
 
       <div class="contact-cta">
         <a href="tel:+37127221212" class="btn btn-primary btn-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-          </svg>
-          Zvanīt tagad
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span data-i18n="contact_call_btn">Zvanīt tagad</span>
         </a>
       </div>
     </div>
@@ -299,10 +273,33 @@
   <footer class="footer">
     <div class="container footer-inner">
       <span class="footer-logo">MĀJU<strong>DROŠĪBA</strong></span>
-      <span class="footer-copy">&copy; 2025 Māju drošība. Visi tiesības aizsargātas.</span>
+      <span class="footer-copy" data-i18n="footer_copy">&copy; 2025 Māju drošība. Visi tiesības aizsargātas.</span>
     </div>
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/i18n.js"></script>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const status = document.getElementById('form-status');
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(fd))
+        });
+        if (res.ok) {
+          status.textContent = translations['contact_form_success'] || 'Paldies!';
+          status.className = 'form-status success';
+          e.target.reset();
+        } else throw new Error();
+      } catch {
+        status.textContent = translations['contact_form_error'] || 'Kļūda. Zvaniet: 27-22-12-12';
+        status.className = 'form-status error';
+      }
+    });
+  </script>
 </body>
 </html>
