@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — MAJUDROSIBA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: #050d1a; color: #e8edf5; min-height: 100vh; }
+    .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .admin-title { font-family: 'Exo 2', sans-serif; font-size: 1.6rem; font-weight: 800; }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .tab-btn { padding: 8px 20px; border-radius: 8px; border: 1px solid #1e2d45; background: transparent; color: #8a9ab5; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all .2s; }
+    .tab-btn.active { background: #f5a623; color: #050d1a; border-color: #f5a623; font-weight: 700; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .admin-table th { text-align: left; padding: 10px 12px; background: #0d1f38; color: #8a9ab5; font-weight: 600; border-bottom: 1px solid #1e2d45; }
+    .admin-table td { padding: 10px 12px; border-bottom: 1px solid #1a2840; vertical-align: middle; }
+    .admin-table tr:hover td { background: rgba(245,166,35,.04); }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .badge-new { background: #1a3a5c; color: #60b8ff; }
+    .badge-done { background: #0d3320; color: #4caf7d; }
+    .badge-canceled { background: #3a1a1a; color: #ff7070; }
+    .product-form { background: #0d1f38; border-radius: 12px; padding: 24px; margin-bottom: 24px; display: none; }
+    .product-form.open { display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-input { width: 100%; padding: 10px 14px; background: #0a1628; border: 1px solid #1e2d45; border-radius: 8px; color: #e8edf5; font-family: inherit; font-size: 0.9rem; box-sizing: border-box; }
+    .form-input:focus { outline: none; border-color: #f5a623; }
+    .form-label { display: block; font-size: 0.78rem; color: #8a9ab5; margin-bottom: 4px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+    .btn-danger { background: #7a1f1f; color: #ffaaaa; border: none; border-radius: 6px; cursor: pointer; padding: 6px 14px; font-size: 0.82rem; }
+    .btn-danger:hover { background: #a02020; }
+    .add-btn-wrap { margin-bottom: 16px; }
+    .product-img-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+    .order-items { font-size: 0.8rem; color: #8a9ab5; }
+    select.form-input { appearance: auto; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div class="admin-title">MĀJU<strong style="color:#f5a623">DROŠĪBA</strong> — Admin</div>
+      <a href="../index.html" class="btn btn-ghost btn-sm">← Sākums</a>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="products">Produkti</button>
+      <button class="tab-btn" data-tab="orders">Pasūtījumi</button>
+    </div>
+
+    <!-- PRODUCTS PANEL -->
+    <div class="panel active" id="panel-products">
+      <div class="add-btn-wrap">
+        <button class="btn btn-primary" id="btn-add-product">+ Pievienot produktu</button>
+      </div>
+
+      <div class="product-form" id="product-form">
+        <h3 style="margin:0 0 16px;font-family:'Exo 2',sans-serif" id="form-title">Jauns produkts</h3>
+        <input type="hidden" id="f-id">
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Kategorija</label>
+            <select class="form-input" id="f-category"></select>
+          </div>
+          <div>
+            <label class="form-label">Cena (€)</label>
+            <input type="number" step="0.01" class="form-input" id="f-price" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Nosaukums LV</label>
+            <input type="text" class="form-input" id="f-name-lv">
+          </div>
+          <div>
+            <label class="form-label">Nosaukums RU</label>
+            <input type="text" class="form-input" id="f-name-ru">
+          </div>
+          <div>
+            <label class="form-label">Nosaukums EN</label>
+            <input type="text" class="form-input" id="f-name-en">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Apraksts LV</label>
+            <input type="text" class="form-input" id="f-desc-lv">
+          </div>
+          <div>
+            <label class="form-label">Apraksts RU</label>
+            <input type="text" class="form-input" id="f-desc-ru">
+          </div>
+          <div>
+            <label class="form-label">Apraksts EN</label>
+            <input type="text" class="form-input" id="f-desc-en">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Attēla URL</label>
+            <input type="text" class="form-input" id="f-image" placeholder="https://...">
+          </div>
+          <div>
+            <label class="form-label">Noliktavā</label>
+            <select class="form-input" id="f-instock">
+              <option value="1">Jā</option>
+              <option value="0">Nē</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="btn-save-product">Saglabāt</button>
+          <button class="btn btn-ghost btn-sm" id="btn-cancel-product">Atcelt</button>
+        </div>
+      </div>
+
+      <table class="admin-table" id="products-table">
+        <thead>
+          <tr>
+            <th>Attēls</th>
+            <th>Nosaukums</th>
+            <th>Kategorija</th>
+            <th>Cena</th>
+            <th>Noliktavā</th>
+            <th>Darbības</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ORDERS PANEL -->
+    <div class="panel" id="panel-orders">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Vārds</th>
+            <th>Tālrunis</th>
+            <th>Preces</th>
+            <th>Kopā</th>
+            <th>Statuss</th>
+            <th>Datums</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let allProducts = [];
+    let allCategories = [];
+    let editingId = null;
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Load categories
+    async function loadCategories() {
+      const res = await fetch('/api/categories');
+      allCategories = res.ok ? await res.json() : [];
+      const sel = document.getElementById('f-category');
+      sel.innerHTML = allCategories.map(c => `<option value="${c.id}">${c.name_lv}</option>`).join('');
+    }
+
+    // Load & render products
+    async function loadProducts() {
+      const res = await fetch('/api/products/all');
+      allProducts = res.ok ? await res.json() : [];
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const tbody = document.getElementById('products-tbody');
+      if (!allProducts.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#8a9ab5;text-align:center;padding:24px">Nav produktu</td></tr>';
+        return;
+      }
+      tbody.innerHTML = allProducts.map(p => {
+        const cat = allCategories.find(c => c.id === p.category_id);
+        return `<tr>
+          <td>${p.image_url ? `<img src="${p.image_url}" class="product-img-thumb">` : '—'}</td>
+          <td>${p.name_lv}</td>
+          <td>${cat ? cat.name_lv : p.category_id}</td>
+          <td>${p.price.toFixed(2)} €</td>
+          <td>${p.in_stock ? '✓' : '✗'}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Rediģēt</button>
+            <button class="btn-danger" onclick="deleteProduct(${p.id})">Dzēst</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Load orders
+    async function loadOrders() {
+      const res = await fetch('/api/orders');
+      const orders = res.ok ? await res.json() : [];
+      const tbody = document.getElementById('orders-tbody');
+      if (!orders.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:#8a9ab5;text-align:center;padding:24px">Nav pasūtījumu</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(o => {
+        const items = JSON.parse(o.items || '[]');
+        const statusClass = o.status === 'new' ? 'badge-new' : o.status === 'done' ? 'badge-done' : 'badge-canceled';
+        const date = new Date(o.created_at).toLocaleDateString('lv-LV');
+        return `<tr>
+          <td>#${o.id}</td>
+          <td>${o.name}<br><small style="color:#8a9ab5">${o.email||''}</small></td>
+          <td>${o.phone}</td>
+          <td class="order-items">${items.map(i => `${i.name} × ${i.qty}`).join('<br>')}</td>
+          <td>${o.total.toFixed(2)} €</td>
+          <td>
+            <select class="form-input" style="padding:4px 8px;font-size:.78rem" onchange="updateStatus(${o.id}, this.value)">
+              <option value="new" ${o.status==='new'?'selected':''}>Jauns</option>
+              <option value="processing" ${o.status==='processing'?'selected':''}>Apstrādē</option>
+              <option value="done" ${o.status==='done'?'selected':''}>Izpildīts</option>
+              <option value="canceled" ${o.status==='canceled'?'selected':''}>Atcelts</option>
+            </select>
+          </td>
+          <td>${date}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Product form
+    document.getElementById('btn-add-product').addEventListener('click', () => {
+      editingId = null;
+      clearForm();
+      document.getElementById('form-title').textContent = 'Jauns produkts';
+      document.getElementById('product-form').classList.add('open');
+    });
+
+    document.getElementById('btn-cancel-product').addEventListener('click', () => {
+      document.getElementById('product-form').classList.remove('open');
+    });
+
+    function clearForm() {
+      ['f-id','f-price','f-name-lv','f-name-ru','f-name-en','f-desc-lv','f-desc-ru','f-desc-en','f-image'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('f-instock').value = '1';
+    }
+
+    function editProduct(id) {
+      const p = allProducts.find(x => x.id === id);
+      if (!p) return;
+      editingId = id;
+      document.getElementById('f-id').value = p.id;
+      document.getElementById('f-category').value = p.category_id;
+      document.getElementById('f-price').value = p.price;
+      document.getElementById('f-name-lv').value = p.name_lv;
+      document.getElementById('f-name-ru').value = p.name_ru;
+      document.getElementById('f-name-en').value = p.name_en;
+      document.getElementById('f-desc-lv').value = p.desc_lv || '';
+      document.getElementById('f-desc-ru').value = p.desc_ru || '';
+      document.getElementById('f-desc-en').value = p.desc_en || '';
+      document.getElementById('f-image').value = p.image_url || '';
+      document.getElementById('f-instock').value = p.in_stock ? '1' : '0';
+      document.getElementById('form-title').textContent = 'Rediģēt produktu';
+      document.getElementById('product-form').classList.add('open');
+      document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('btn-save-product').addEventListener('click', async () => {
+      const payload = {
+        category_id: document.getElementById('f-category').value,
+        price: parseFloat(document.getElementById('f-price').value) || 0,
+        name_lv: document.getElementById('f-name-lv').value.trim(),
+        name_ru: document.getElementById('f-name-ru').value.trim(),
+        name_en: document.getElementById('f-name-en').value.trim(),
+        desc_lv: document.getElementById('f-desc-lv').value.trim(),
+        desc_ru: document.getElementById('f-desc-ru').value.trim(),
+        desc_en: document.getElementById('f-desc-en').value.trim(),
+        image_url: document.getElementById('f-image').value.trim(),
+        in_stock: parseInt(document.getElementById('f-instock').value)
+      };
+      if (!payload.name_lv || !payload.name_ru || !payload.name_en) {
+        alert('Aizpildiet visus nosaukumus!');
+        return;
+      }
+      const url = editingId ? `/api/products/${editingId}` : '/api/products';
+      const method = editingId ? 'PUT' : 'POST';
+      await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      document.getElementById('product-form').classList.remove('open');
+      await loadProducts();
+    });
+
+    async function deleteProduct(id) {
+      if (!confirm('Dzēst šo produktu?')) return;
+      await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      await loadProducts();
+    }
+
+    async function updateStatus(id, status) {
+      await fetch(`/api/orders/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+    }
+
+    // Init
+    (async () => {
+      await loadCategories();
+      await Promise.all([loadProducts(), loadOrders()]);
+    })();
+  </script>
+</body>
+</html>

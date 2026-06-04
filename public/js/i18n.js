@@ -42,7 +42,10 @@ async function setLanguage(lang) {
   localStorage.setItem('lang', lang);
   await loadLang(lang);
   applyTranslations();
+  document.dispatchEvent(new Event('langChanged'));
 }
+
+window.i18n = key => translations[key] !== undefined ? translations[key] : key;
 
 async function initI18n() {
   const lang = getLang();
