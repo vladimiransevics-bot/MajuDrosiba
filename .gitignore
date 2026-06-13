@@ -4,3 +4,7 @@ node_modules/
 .env
 .DS_Store
 *.log
+
+# generated localized pages (built at startup from LV source)
+public/ru/
+public/en/

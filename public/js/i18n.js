@@ -2,17 +2,26 @@ const LANGS = ['lv', 'ru', 'en'];
 const DEFAULT_LANG = 'lv';
 let translations = {};
 
-function getBrowserLang() {
-  const lang = (navigator.language || '').slice(0, 2).toLowerCase();
-  return LANGS.includes(lang) ? lang : DEFAULT_LANG;
+// Language is determined by the URL: /ru/... → ru, /en/... → en, otherwise lv.
+// Each language is a prerendered set of pages (see server/build-i18n.js), so the
+// switcher navigates between language URLs instead of swapping text in place.
+function pathInfo() {
+  const m = location.pathname.match(/^\/(ru|en)(\/.*)?$/);
+  if (m) return { lang: m[1], rest: m[2] || '/' };
+  return { lang: DEFAULT_LANG, rest: location.pathname };
 }
 
 function getLang() {
-  return localStorage.getItem('lang') || getBrowserLang();
+  return pathInfo().lang;
 }
 
-// Derive deploy-root from this script's own URL — works on any subpath
-// (localhost, /MajuDrosiba/, /door-website/, custom domain, etc.)
+function urlForLang(lang) {
+  const { rest } = pathInfo();
+  const prefix = lang === DEFAULT_LANG ? '' : '/' + lang;
+  return (prefix + rest || '/') + location.search + location.hash;
+}
+
+// Derive deploy-root from this script's own URL — works on any subpath.
 const I18N_BASE = (function() {
   const tag = document.currentScript
     || [...document.getElementsByTagName('script')].find(s => /\/js\/i18n\.js(?:\?|$)/.test(s.src));
@@ -47,20 +56,19 @@ function applyTranslations() {
   document.documentElement.lang = getLang();
 }
 
-async function setLanguage(lang) {
-  if (!LANGS.includes(lang)) return;
-  localStorage.setItem('lang', lang);
-  try {
-    await loadLang(lang);
-  } catch(e) { return; }
-  applyTranslations();
-  document.dispatchEvent(new Event('langChanged'));
+// Switching language = navigating to that language's URL for the current page.
+function setLanguage(lang) {
+  if (!LANGS.includes(lang) || lang === getLang()) return;
+  location.href = urlForLang(lang);
 }
 
 window.i18n = key => translations[key] !== undefined ? translations[key] : key;
 
 async function initI18n() {
   const lang = getLang();
+  // Keep localStorage in sync with the URL language — shop/cart/carousel read it
+  // to pick which language field of a product to display.
+  try { localStorage.setItem('lang', lang); } catch (e) {}
   try {
     await loadLang(lang);
     applyTranslations();

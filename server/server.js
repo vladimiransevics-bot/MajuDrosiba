@@ -5,6 +5,15 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { requireAuth } = require('./auth');
 
+// Prerender RU/EN localized pages from the LV source on startup.
+// Single source of truth = LV HTML + lang/*.json; generated copies are not committed.
+try {
+  const n = require('./build-i18n').build();
+  console.log(`[i18n] generated ${n} localized pages`);
+} catch (e) {
+  console.error('[i18n] prerender failed (LV still served):', e.message);
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
