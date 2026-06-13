@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /cart.html
+
+Sitemap: https://majudrosiba.onrender.com/sitemap.xml
