@@ -3,14 +3,647 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Metāla durvis — MAJUDROSIBA</title>
-  <meta name="description" content="Metāla ieejas durvis Rīgā — tērauda durvis ar sertificētām slēdzenēm. Uzstādīšana, remonts un nomaiņa.">
+  <title data-i18n="d_page_title">Metāla durvis Rīgā — ražotāja cenas | MĀJU DROŠĪBA</title>
+  <meta name="description" content="Metāla ieejas durvis Rīgā no ražotāja. Montāža iekļauta. Cenas no 520€. Garantija 2 gadi. Slēdzenes MOTTURA un ASSA.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* ── Door catalog scoped styles ── */
+    .dh-section { padding: 80px 0; }
+    .dh-section-light { background: #f4f5f7; }
+    .dh-section-white { background: #fff; }
+    .dh-section-dark { background: var(--bg); }
+    .dh-section-mid  { background: var(--bg-2); }
+
+    .dh-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .dh-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+    .dh-h2-dark { color: #1a1a2e; }
+    .dh-h2-light { color: var(--text); }
+    .dh-sub {
+      font-size: 15px;
+      color: #888;
+      margin-top: 8px;
+    }
+    .dh-sub-light { color: var(--text-muted); }
+    .dh-center { text-align: center; }
+    .dh-mb { margin-bottom: 56px; }
+
+    /* ── HERO ── */
+    .dh-hero {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 50%, var(--surface) 100%);
+      padding: 100px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dh-hero::before {
+      content: '';
+      position: absolute;
+      top: 60px; right: 40px;
+      width: 340px; height: 340px;
+      border: 2px solid rgba(255,255,255,.04);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .dh-hero::after {
+      content: '';
+      position: absolute;
+      top: 110px; right: 110px;
+      width: 200px; height: 200px;
+      border: 1px solid rgba(255,255,255,.03);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .dh-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 60px;
+      align-items: center;
+    }
+    .dh-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245,166,35,.12);
+      border: 1px solid rgba(245,166,35,.25);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .dh-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 4.5vw, 58px);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .dh-hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .dh-hero h1 span {
+      display: block;
+      font-size: clamp(22px, 2.8vw, 36px);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .dh-hero-desc {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .dh-trust-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .dh-trust-item {
+      background: rgba(255,255,255,.07);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .dh-trust-item .ico { font-size: 18px; }
+    .dh-hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .dh-price-box {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 32px;
+      backdrop-filter: blur(8px);
+    }
+    .dh-price-box .from {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .dh-price-box .big-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .dh-price-box .big-price .num {
+      font-family: var(--font-display);
+      font-size: 60px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+    }
+    .dh-price-box .big-price .cur {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .dh-price-box .big-price .vat {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .dh-price-box .incl {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .dh-price-list { border-top: 1px solid rgba(255,255,255,.08); }
+    .dh-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    .dh-price-row .mn { color: var(--text-muted); }
+    .dh-price-row .pr { color: var(--text); font-weight: 700; }
+    .dh-price-row.accent .mn { color: var(--accent); font-weight: 600; }
+    .dh-price-row.accent .pr { color: var(--accent); font-weight: 900; }
+    .dh-price-box .cta-row { margin-top: 20px; }
+
+    /* ── STATS ── */
+    .dh-stats {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 0;
+    }
+    .dh-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+    .dh-stat-num {
+      font-family: var(--font-display);
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .dh-stat-lbl {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── CATALOG ── */
+    .door-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .door-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #e8e8e8;
+      transition: transform .25s ease, box-shadow .25s ease;
+      position: relative;
+    }
+    .door-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.12);
+    }
+    .door-card.featured {
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 32px rgba(245,166,35,.15);
+    }
+    .door-card.dark-card {
+      background: var(--bg);
+      border-color: rgba(245,166,35,.3);
+    }
+    .door-card-img {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      background: #eee;
+    }
+    .door-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .door-card-badge {
+      position: absolute;
+      bottom: 12px; left: 12px;
+      background: rgba(20,20,30,.8);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+    .door-card-badge.gold {
+      background: var(--accent);
+      color: #000;
+    }
+    .door-card-popular {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: linear-gradient(90deg, #e94560, var(--accent));
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      z-index: 1;
+    }
+    .door-card-body { padding: 22px; }
+    .door-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .door-card-head h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .dark-card .door-card-head h3 { color: var(--text); }
+    .door-price { text-align: right; }
+    .door-price .p { font-family: var(--font-display); font-size: 24px; font-weight: 900; color: var(--accent); }
+    .door-price .vat { font-size: 11px; color: #aaa; }
+    .door-card-feats {
+      list-style: none;
+      margin-bottom: 18px;
+    }
+    .door-card-feats li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #555;
+      padding: 4px 0;
+    }
+    .dark-card .door-card-feats li { color: var(--text-muted); }
+    .door-card-feats li .ck { color: #22c55e; font-weight: 700; }
+    .dark-card .door-card-feats li .ck { color: var(--accent); }
+    .door-f-highlight { color: var(--text); font-weight: 600; }
+
+    /* DIVVIRU wide card */
+    .divviru-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      border: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 22px;
+      transition: box-shadow .25s ease;
+    }
+    .divviru-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.08); }
+    .divviru-img {
+      flex-shrink: 0;
+      width: 180px;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #eee;
+    }
+    .divviru-img img { width: 100%; height: 100%; object-fit: cover; }
+    .divviru-body { flex: 1; }
+    .divviru-body h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+    .divviru-body p { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .divviru-feats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      list-style: none;
+      font-size: 13px;
+      color: #555;
+    }
+    .divviru-feats li { display: flex; align-items: center; gap: 4px; }
+    .divviru-feats li .ck { color: #22c55e; }
+    .divviru-price-col { text-align: center; flex-shrink: 0; }
+    .divviru-price-col .from { font-size: 11px; color: #aaa; margin-bottom: 2px; }
+    .divviru-price-col .p { font-family: var(--font-display); font-size: 30px; font-weight: 900; color: var(--accent); }
+
+    /* ── OPTIONS ── */
+    .dh-pvc-strip {
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .dh-pvc-strip img { width: 100%; height: 64px; object-fit: cover; display: block; }
+    .dh-pvc-caption {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      padding: 8px 0 20px;
+    }
+    .dh-opt-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .dh-opt-card {
+      background: #f4f5f7;
+      border-radius: 14px;
+      overflow: hidden;
+      border-left: 4px solid var(--accent);
+    }
+    .dh-opt-card img { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .dh-opt-body { padding: 16px; }
+    .dh-opt-body .ttl { font-weight: 700; font-size: 14px; color: #1a1a2e; margin-bottom: 4px; }
+    .dh-opt-body .desc { font-size: 12px; color: #777; margin-bottom: 8px; }
+    .dh-opt-body .price { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--accent); }
+
+    /* ── ADVANTAGES ── */
+    .dh-adv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      text-align: center;
+    }
+    .dh-adv-icon {
+      width: 64px; height: 64px;
+      background: rgba(245,166,35,.12);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 16px;
+    }
+    .dh-adv-item h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .dh-adv-item p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── PROCESS ── */
+    .dh-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      text-align: center;
+      position: relative;
+    }
+    .dh-step-num {
+      width: 72px; height: 72px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      color: #000;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 20px rgba(245,166,35,.3);
+    }
+    .dh-step h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+    .dh-step p { font-size: 13px; color: #666; }
+
+    /* ── SERVICE AREA ── */
+    .dh-area-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .dh-area-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a2e;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .dh-area-item.span2 { grid-column: span 2; }
+    .dh-area-note { font-size: 12px; color: #aaa; margin-top: 14px; }
+
+    /* ── FAQ ── */
+    .dh-faq-list { max-width: 720px; margin: 0 auto; }
+    .dh-faq-list details {
+      background: #f4f5f7;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .dh-faq-list summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #1a1a2e;
+      list-style: none;
+      user-select: none;
+    }
+    .dh-faq-list summary::-webkit-details-marker { display: none; }
+    .dh-faq-list summary .faq-icon {
+      color: var(--accent);
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-left: 12px;
+      transition: transform .2s;
+    }
+    .dh-faq-list details[open] summary .faq-icon { transform: rotate(45deg); }
+    .dh-faq-list details p {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.65;
+    }
+
+    /* ── CONTACT ── */
+    .dh-contact {
+      background: var(--bg-2);
+      padding: 80px 0;
+    }
+    .dh-contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .dh-contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .dh-contact-info-item .ci-icon {
+      width: 40px; height: 40px;
+      background: rgba(245,166,35,.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .dh-contact-info-item .ci-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .dh-contact-info-item .ci-val {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .dh-contact-info-item a:hover .ci-val { color: var(--accent); }
+    .dh-form-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 16px 60px rgba(0,0,0,.2);
+    }
+    .dh-form-box .f-row { margin-bottom: 16px; }
+    .dh-form-box label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .dh-form-box input,
+    .dh-form-box select,
+    .dh-form-box textarea {
+      width: 100%;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: #222;
+      background: #fff;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .dh-form-box input:focus,
+    .dh-form-box select:focus,
+    .dh-form-box textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245,166,35,.12);
+    }
+    .dh-form-box textarea { resize: none; }
+    .dh-form-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .dh-form-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(245,166,35,.3);
+    }
+    .dh-form-note {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 10px;
+    }
+    .dh-form-success {
+      display: none;
+      text-align: center;
+      padding: 30px 0;
+    }
+    .dh-form-success .ico { font-size: 48px; margin-bottom: 12px; }
+    .dh-form-success h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+    .dh-form-success p { font-size: 14px; color: #666; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .dh-hero-grid { grid-template-columns: 1fr; }
+      .dh-price-box { display: none; }
+      .door-grid { grid-template-columns: repeat(2, 1fr); }
+      .dh-adv-grid { grid-template-columns: repeat(2, 1fr); }
+      .dh-contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .dh-opt-grid { grid-template-columns: repeat(2, 1fr); }
+      .dh-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .dh-section { padding: 56px 0; }
+      .door-grid { grid-template-columns: 1fr; }
+      .dh-steps { grid-template-columns: 1fr; }
+      .dh-adv-grid { grid-template-columns: 1fr; }
+      .dh-opt-grid { grid-template-columns: 1fr; }
+      .dh-trust-grid { grid-template-columns: 1fr; }
+      .divviru-card { flex-direction: column; }
+      .divviru-img { width: 100%; height: 160px; }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- SITE HEADER -->
   <header class="header" id="header">
     <div class="container header-inner">
       <a href="../index.html" class="header-logo">
@@ -36,108 +669,543 @@
     <a href="../shop.html" class="mobile-nav-link" data-i18n="nav_shop">Veikals</a>
     <a href="../index.html#contact" class="mobile-nav-link" data-i18n="nav_contact">Kontakti</a>
     <div class="mobile-lang"><button class="lang-btn" data-lang="lv">LV</button><button class="lang-btn" data-lang="ru">RU</button><button class="lang-btn" data-lang="en">EN</button></div>
-    <a href="tel:+37127221212" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">Zvanīt 27-22-12-12</a>
+    <a href="tel:+37127221212" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" data-i18n="svc_cta_call">Zvanīt 27-22-12-12</a>
   </div>
 
-  <section class="page-hero">
+  <!-- HERO -->
+  <section class="dh-hero">
     <div class="container">
-      <div class="breadcrumb">
-        <a href="../index.html" data-i18n="back_home">Sākums</a><span>›</span>
-        <a href="../index.html#services" data-i18n="nav_services">Pakalpojumi</a><span>›</span>
-        <strong data-i18n="svc_doors_title">Metāla durvis</strong>
-      </div>
-      <p class="page-hero-label" data-i18n="svc_doors_title">Metāla durvis</p>
-      <h1 class="page-hero-title" data-i18n="svc_doors_title">Metāla durvis</h1>
-      <p class="page-hero-desc" data-i18n="svc_doors_desc">Drošas metāla ieejas durvis ar sertificētām slēdzenēm. Uzstādīšana, remonts un nomaiņa.</p>
-      <div class="page-hero-actions">
-        <a href="../index.html#contact" class="btn btn-primary btn-lg" data-i18n="svc_cta_btn">Sazināties</a>
-        <a href="../shop.html?category=metal-doors" class="btn btn-ghost btn-lg" data-i18n="svc_products_title">Produkti</a>
+      <div class="dh-hero-grid">
+        <div>
+          <div class="dh-hero-badge" data-i18n="d_hero_badge">🇱🇻 Latvijas ražotājs</div>
+          <h1 data-i18n="d_hero_h1">Metāla<br><em>durvis</em> Rīgā<br><span>par ražotāja cenām</span></h1>
+          <p class="dh-hero-desc" data-i18n="d_hero_desc">Izgatavoja un uzstādām metāla ieejas durvis Rīgā un apkārtnē. Montāža iekļauta cenā. Garantija 2 gadi.</p>
+          <div class="dh-trust-grid">
+            <div class="dh-trust-item"><span class="ico">🔒</span> <span data-i18n="d_trust_1">Slēdzenes MOTTURA &amp; ASSA</span></div>
+            <div class="dh-trust-item"><span class="ico">🛡️</span> <span data-i18n="d_trust_2">Garantija 2 gadi</span></div>
+            <div class="dh-trust-item"><span class="ico">🚚</span> <span data-i18n="d_trust_3">Montāža iekļauta</span></div>
+            <div class="dh-trust-item"><span class="ico">🏭</span> <span data-i18n="d_trust_4">Ražošana Latvijā</span></div>
+          </div>
+          <div class="dh-hero-ctas">
+            <a href="#contact" class="btn btn-primary btn-lg" data-i18n="d_cta_free_calc">Saņemt aprēķinu bez maksas</a>
+            <a href="#catalog" class="btn btn-ghost btn-lg" data-i18n="d_cta_catalog">Skatīt katalogu</a>
+          </div>
+        </div>
+
+        <div class="dh-price-box">
+          <p class="from" data-i18n="d_price_from_lbl">Cenas no</p>
+          <div class="big-price">
+            <span class="num">520</span>
+            <span class="cur">€</span>
+            <span class="vat" data-i18n="d_price_vat">bez PVN</span>
+          </div>
+          <p class="incl" data-i18n="d_price_incl">Ietver piegādi un montāžu Rīgā</p>
+          <div class="dh-price-list">
+            <div class="dh-price-row"><span class="mn">STANDART</span><span class="pr">520 €</span></div>
+            <div class="dh-price-row"><span class="mn">BEST</span><span class="pr">580 €</span></div>
+            <div class="dh-price-row"><span class="mn">PREMIUM</span><span class="pr">610 €</span></div>
+            <div class="dh-price-row"><span class="mn">SKANDI</span><span class="pr">640 €</span></div>
+            <div class="dh-price-row"><span class="mn">SKANDI INOX</span><span class="pr">700 €</span></div>
+            <div class="dh-price-row accent"><span class="mn">SKANDI INOX PLUSS</span><span class="pr">750 €</span></div>
+          </div>
+          <div class="cta-row">
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_cta_order_now">Pasūtīt tagad</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="about-section">
+  <!-- STATS -->
+  <section class="dh-stats">
     <div class="container">
-      <div class="about-grid">
-        <div class="about-photo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="2" width="18" height="20" rx="1"/><circle cx="17" cy="12" r="1.5" fill="currentColor" stroke="none"/><line x1="3" y1="7" x2="21" y2="7"/></svg>
-          <span>Foto drīzumā</span>
+      <div class="dh-stats-grid">
+        <div><p class="dh-stat-num">15+</p><p class="dh-stat-lbl" data-i18n="d_stat_1_lbl">gadi tirgū</p></div>
+        <div><p class="dh-stat-num">500+</p><p class="dh-stat-lbl" data-i18n="d_stat_2_lbl">uzstādītas durvis</p></div>
+        <div><p class="dh-stat-num" data-i18n="d_stat_3_num">2 gadi</p><p class="dh-stat-lbl" data-i18n="d_stat_3_lbl">garantija</p></div>
+        <div><p class="dh-stat-num" data-i18n="d_stat_4_num">Rīga</p><p class="dh-stat-lbl" data-i18n="d_stat_4_lbl">un apkārtne</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section id="catalog" class="dh-section dh-section-light">
+    <div class="container">
+      <div class="dh-center dh-mb">
+        <span class="dh-label" data-i18n="d_catalog_lbl">Visi modeļi</span>
+        <h2 class="dh-h2 dh-h2-dark" data-i18n="d_catalog_title">Metāla durvju katalogs</h2>
+        <p class="dh-sub" data-i18n="d_catalog_sub">Visas cenas ietver piegādi un montāžu Rīgā. Cenas bez PVN (21%).</p>
+      </div>
+
+      <div class="door-grid">
+
+        <!-- STANDART -->
+        <div class="door-card">
+          <div class="door-card-img">
+            <img src="../images/doors/3.png" alt="STANDART">
+            <span class="door-card-badge">STANDART</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>STANDART</h3>
+              <div class="door-price"><span class="p">520 €</span><div class="vat" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f1">Vārtslagas biezums: 43 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f2">Metāls 1.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f3">Rāmis: 60 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f4">2 slēdzenes: Border + LOB</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f5">PVC pārklājums (7 krāsas)</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_std_f6">Minerālvate</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_btn">Pasūtīt</a>
+          </div>
         </div>
-        <div class="about-content">
-          <h2 data-i18n="svc_about_title">Par pakalpojumu</h2>
-          <p data-i18n="svc_doors_about_p1">Metāla ieejas durvis ir pirmā aizsardzības līnija jūsu mājai vai uzņēmumam. Mūsdienu metāla durvis ir ne tikai drošas, bet arī estētiski pievilcīgas.</p>
-          <p data-i18n="svc_doors_about_p2">Piegādājam un uzstādām metāla durvis ar sertificētām slēdzenēm, papildu aizsardzības slāņiem un dažādiem apdares variantiem.</p>
-          <ul class="feature-list">
-            <li data-i18n="svc_doors_f1">Tērauda durvis ar sertificētu izturību</li>
-            <li data-i18n="svc_doors_f2">Vairāklīmeņu slēgšanas sistēmas</li>
-            <li data-i18n="svc_doors_f3">Siltumizolācija un skaņas izolācija</li>
-            <li data-i18n="svc_doors_f4">Dažādi apdares varianti</li>
-            <li data-i18n="svc_doors_f5">Uzstādīšana un vecā durvju noņemšana</li>
+
+        <!-- BEST -->
+        <div class="door-card">
+          <div class="door-card-img">
+            <img src="../images/doors/2.png" alt="BEST">
+            <span class="door-card-badge">BEST</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>BEST</h3>
+              <div class="door-price"><span class="p">580 €</span><div class="vat" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f1">Vārtslagas biezums: 53 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f2">Metāls 1.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f3">Rāmis: 80 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f4">Slēdzenes MOTTURA 40 + LOB</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f5">Pagrieziens eurocilindrs</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_best_f6">PVC pārklājums</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_btn">Pasūtīt</a>
+          </div>
+        </div>
+
+        <!-- PREMIUM (featured) -->
+        <div class="door-card featured">
+          <span class="door-card-popular" data-i18n="d_popular_badge">Pārdošanas hits</span>
+          <div class="door-card-img">
+            <img src="../images/doors/1.png" alt="PREMIUM">
+            <span class="door-card-badge">PREMIUM</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>PREMIUM</h3>
+              <div class="door-price"><span class="p">610 €</span><div class="vat" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f1">Vārtslagas biezums: 53.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f2"><strong>Metāls 2.0 mm</strong></span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f3">Slēdzene MOTTURA 52. sērija</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f4">Aizšaujamais stieņis iekļauts</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f5">Minerālvate</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_prem_f6">Durtuaizverējs 180°</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_btn">Pasūtīt</a>
+          </div>
+        </div>
+
+        <!-- SKANDI -->
+        <div class="door-card">
+          <div class="door-card-img">
+            <img src="../images/doors/4.png" alt="SKANDI">
+            <span class="door-card-badge">SKANDI</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>SKANDI</h3>
+              <div class="door-price"><span class="p">640 €</span><div class="vat" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_sk_f1">Vārtslagas biezums: 53.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_sk_f2">Metāls 2.0 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_sk_f3">MOTTURA 40 + ASSA oriģināls</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_sk_f4">Skandināvu dizains</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_sk_f5">2 slēdzenes</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_btn">Pasūtīt</a>
+          </div>
+        </div>
+
+        <!-- SKANDI INOX -->
+        <div class="door-card">
+          <div class="door-card-img">
+            <img src="../images/doors/5.jpg" alt="SKANDI INOX">
+            <span class="door-card-badge">SKANDI INOX</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>SKANDI INOX</h3>
+              <div class="door-price"><span class="p">700 €</span><div class="vat" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_ski_f1">Biezums: 63.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_ski_f2"><strong>Rāmis 100 mm</strong></span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_ski_f3">Pastiprināta konstrukcija</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_ski_f4">Nerūsējošais tērauds</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_ski_f5">2 slēdzenes MOTTURA</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_btn">Pasūtīt</a>
+          </div>
+        </div>
+
+        <!-- SKANDI INOX PLUSS (dark) -->
+        <div class="door-card dark-card">
+          <div class="door-card-img">
+            <img src="../images/doors/6.jpg" alt="SKANDI INOX PLUSS">
+            <span class="door-card-badge gold">PLUSS</span>
+          </div>
+          <div class="door-card-body">
+            <div class="door-card-head">
+              <h3>SKANDI INOX PLUSS</h3>
+              <div class="door-price"><span class="p">750 €</span><div class="vat" style="color:#666" data-i18n="d_price_vat">bez PVN</div></div>
+            </div>
+            <ul class="door-card-feats">
+              <li><span class="ck">✓</span> <span data-i18n="d_skip_f1">Biezums: 63.5 mm</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_skip_f2">Rāmis 100 mm</span></li>
+              <li><span class="ck">✓</span> <span class="door-f-highlight" data-i18n="d_skip_f3">2 slēdzenes MOTTURA 52. sērija</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_skip_f4">Nerūsējošais tērauds</span></li>
+              <li><span class="ck">✓</span> <span data-i18n="d_skip_f5">Maksimāla aizsardzība</span></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center" data-i18n="d_order_premium_btn">Pasūtīt premium</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DIVVIRU -->
+      <div class="divviru-card">
+        <div class="divviru-img">
+          <img src="../images/doors/7.jpg" alt="DIVVIRU">
+        </div>
+        <div class="divviru-body">
+          <h3 data-i18n="d_div_title">Divvērtņu durvis DIVVIRU</h3>
+          <p data-i18n="d_div_desc">Metāla divvērtņu durvis platiem atvērumiem. Cena tiek aprēķināta individuāli pēc platības.</p>
+          <ul class="divviru-feats">
+            <li><span class="ck">✓</span> <span data-i18n="d_div_f1">Biezums: 53 mm</span></li>
+            <li><span class="ck">✓</span> <span data-i18n="d_div_f2">Slēdzenes MOTTURA</span></li>
+            <li><span class="ck">✓</span> <span data-i18n="d_div_f3">Nestandarta izmēri</span></li>
           </ul>
         </div>
+        <div class="divviru-price-col">
+          <p class="from" data-i18n="d_div_from">no</p>
+          <p class="p">300 €/m²</p>
+          <a href="#contact" class="btn btn-primary" style="margin-top:12px" data-i18n="d_div_calc_btn">Aprēķināt</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="svc-products">
+  <!-- OPTIONS -->
+  <section class="dh-section dh-section-white">
     <div class="container">
-      <h2 class="section-title" data-i18n="svc_products_title">Produkti</h2>
-      <div class="product-grid" id="product-grid">
-        <div class="products-empty" data-i18n="svc_products_empty">Produkti drīzumā tiks pievienoti</div>
+      <div class="dh-center dh-mb">
+        <span class="dh-label" data-i18n="d_opt_lbl">Personalizācija</span>
+        <h2 class="dh-h2 dh-h2-dark" data-i18n="d_opt_title">Papildu opcijas</h2>
       </div>
-      <div class="products-view-all">
-        <a href="../shop.html?category=metal-doors" class="btn btn-ghost" data-i18n="svc_products_view_all">Skatīt visu veikalu</a>
+      <div class="dh-pvc-strip">
+        <img src="../images/doors/pleve1.png" alt="PVC pārklājums">
+      </div>
+      <p class="dh-pvc-caption" data-i18n="d_pvc_caption">PVC pārklājums — 7 koka nokrāsas pamatkomplektācijā</p>
+      <div class="dh-opt-grid">
+        <div class="dh-opt-card">
+          <img src="../images/doors/ral2.jpg" alt="RAL">
+          <div class="dh-opt-body">
+            <p class="ttl" data-i18n="d_opt1_ttl">Pulverkrāsojums RAL</p>
+            <p class="desc" data-i18n="d_opt1_desc">Jebkura krāsa pēc RAL kataloga</p>
+            <p class="price">+ 60 €</p>
+          </div>
+        </div>
+        <div class="dh-opt-card">
+          <div class="dh-opt-body" style="padding-top:20px">
+            <p class="ttl" data-i18n="d_opt2_ttl">Krāsojums Hammerite</p>
+            <p class="desc" data-i18n="d_opt2_desc">Emaljēts ar āmura efektu</p>
+            <p class="price">+ 30 €</p>
+          </div>
+        </div>
+        <div class="dh-opt-card">
+          <div class="dh-opt-body" style="padding-top:20px">
+            <p class="ttl" data-i18n="d_opt3_ttl">Nerūsējošā tērauda slieksnis</p>
+            <p class="desc" data-i18n="d_opt3_desc">Ilgmūžīgs un noturīgs pret nolietojumu</p>
+            <p class="price">+ 25 €</p>
+          </div>
+        </div>
+        <div class="dh-opt-card">
+          <div class="dh-opt-body" style="padding-top:20px">
+            <p class="ttl" data-i18n="d_opt4_ttl">Siltumizolācijas durvis</p>
+            <p class="desc" data-i18n="d_opt4_desc">Palielināts siltumizolācijas biezums</p>
+            <p class="price">+ 30–80 €</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="cta-strip">
+  <!-- ADVANTAGES -->
+  <section class="dh-section dh-section-dark">
     <div class="container">
-      <h2 data-i18n="svc_cta_title">Nepieciešama konsultācija?</h2>
-      <p data-i18n="svc_cta_sub">Sazinieties ar mums — palīdzēsim izvēlēties pareizo risinājumu.</p>
-      <div class="cta-strip-actions">
-        <a href="../index.html#contact" class="btn btn-primary btn-lg" data-i18n="svc_cta_btn">Sazināties</a>
-        <a href="tel:+37127221212" class="btn btn-ghost btn-lg" data-i18n="svc_cta_call">Zvanīt 27-22-12-12</a>
+      <div class="dh-center dh-mb">
+        <span class="dh-label" data-i18n="d_adv_lbl">Kāpēc izvēlēties mūs</span>
+        <h2 class="dh-h2 dh-h2-light" data-i18n="d_adv_title">Īstas metāla durvis,<br>nevis ekonomklase</h2>
+      </div>
+      <div class="dh-adv-grid">
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">🏭</div>
+          <h3 data-i18n="d_adv1_ttl">Ražošana Latvijā</h3>
+          <p data-i18n="d_adv1_desc">Pašu ražotne Rīgā. Kontrolējam katru ražošanas posmu. Bez starpniekiem — ražotāja cenas.</p>
+        </div>
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">🔒</div>
+          <h3 data-i18n="d_adv2_ttl">Tikai kvalitatīvas slēdzenes</h3>
+          <p data-i18n="d_adv2_desc">Uzstādām MOTTURA (Itālija) un ASSA (Zviedrija) slēdzenes — tādas pašas, kādas ir bankās un vēstniecībās.</p>
+        </div>
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">🛡️</div>
+          <h3 data-i18n="d_adv3_ttl">Svars = uzticamība</h3>
+          <p data-i18n="d_adv3_desc">Metāls 1.5–2.0 mm, minerālvate, blīvējums ap perimetru. Mūsu durvis ir smagākas — tātad uzticamākas.</p>
+        </div>
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">🚪</div>
+          <h3 data-i18n="d_adv4_ttl">Montāža iekļauta</h3>
+          <p data-i18n="d_adv4_desc">Piegāde un profesionāla uzstādīšana Rīgā jau iekļauta cenā. Nav slēpto piemaksu pēc pirkuma.</p>
+        </div>
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">🌡️</div>
+          <h3 data-i18n="d_adv5_ttl">Siltuma un skaņas izolācija</h3>
+          <p data-i18n="d_adv5_desc">Minerālvates pildījums nodrošina lielisku siltumizolāciju. Pastiprinātas siltumizolācijas variantam — Warm Doors.</p>
+        </div>
+        <div class="dh-adv-item">
+          <div class="dh-adv-icon">📋</div>
+          <h3 data-i18n="d_adv6_ttl">Garantija 2 gadi</h3>
+          <p data-i18n="d_adv6_desc">Oficiāla garantija 2 gadi uz visiem darbiem un materiāliem. Servisa zona: Rīga, Jūrmala, Jelgava, Ogre.</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- HOW TO ORDER -->
+  <section id="process" class="dh-section dh-section-white">
+    <div class="container">
+      <div class="dh-center dh-mb">
+        <span class="dh-label" data-i18n="d_proc_lbl">Vienkārši un skaidri</span>
+        <h2 class="dh-h2 dh-h2-dark" data-i18n="d_proc_title">Kā pasūtīt durvis</h2>
+      </div>
+      <div class="dh-steps">
+        <div class="dh-step">
+          <div class="dh-step-num">1</div>
+          <h3 data-i18n="d_step1_ttl">Pieteikums</h3>
+          <p data-i18n="d_step1_desc">Zvaniet vai atstājiet pieteikumu vietnē. Izvēlieties modeli vai pajautājiet padomu.</p>
+        </div>
+        <div class="dh-step">
+          <div class="dh-step-num">2</div>
+          <h3 data-i18n="d_step2_ttl">Mērīšana un aprēķins</h3>
+          <p data-i18n="d_step2_desc">Mūsu meistars atnāks mērīt. Precizēsim izmērus, jūs apstipriniet pasūtījumu.</p>
+        </div>
+        <div class="dh-step">
+          <div class="dh-step-num">3</div>
+          <h3 data-i18n="d_step3_ttl">Izgatavošana un montāža</h3>
+          <p data-i18n="d_step3_desc">Izgatavojam jūsu durvis un profesionāli uzstādām jums ērtā laikā.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE AREA -->
+  <section class="dh-section dh-section-light">
+    <div class="container" style="max-width:800px">
+      <div class="dh-center dh-mb">
+        <span class="dh-label" data-i18n="d_area_lbl">Ģeogrāfija</span>
+        <h2 class="dh-h2 dh-h2-dark" data-i18n="d_area_title">Apkalpošanas zona</h2>
+        <p class="dh-sub" data-i18n="d_area_sub">Piegādājam un uzstādām metāla durvis Rīgā un tuvākajās pilsētās.</p>
+      </div>
+      <div class="dh-area-grid">
+        <div class="dh-area-item">📍 <strong data-i18n="d_area_1">Rīga</strong></div>
+        <div class="dh-area-item">📍 <strong data-i18n="d_area_2">Jūrmala</strong></div>
+        <div class="dh-area-item">📍 <strong data-i18n="d_area_3">Jelgava</strong></div>
+        <div class="dh-area-item">📍 <strong data-i18n="d_area_4">Ogre</strong></div>
+        <div class="dh-area-item span2">📍 <strong data-i18n="d_area_5">Rīgas rajons</strong></div>
+      </div>
+      <p class="dh-area-note" data-i18n="d_area_note">* Montāža Rīgas robežās iekļauta cenā. Citām pilsētām — lūdzu precizējiet.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="dh-section dh-section-white">
+    <div class="container">
+      <div class="dh-center dh-mb">
+        <span class="dh-label">FAQ</span>
+        <h2 class="dh-h2 dh-h2-dark" data-i18n="d_faq_title">Bieži uzdotie jautājumi</h2>
+      </div>
+      <div class="dh-faq-list">
+        <details>
+          <summary><span data-i18n="d_faq_q1">Cik maksā metāla durvis Rīgā?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a1">Mūsu metāla durvju cenas sākas no 520 € (modelis STANDART) līdz 750 € (modelis SKANDI INOX PLUSS). Visas cenas norādītas bez PVN (21%) un ietver piegādi un montāžu Rīgas robežās.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q2">Vai montāža ir iekļauta cenā?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a2">Jā, piegāde un profesionāla montāža ir iekļauta norādītajā cenā Rīgas klientiem. Jūrmalai, Jelgavai un Ogrei — precizējiet piegādes izmaksas, pasūtot.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q3">Kura slēdzene ir visdrošākā?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a3">Visdrošākais variants — MOTTURA 52. sērijas slēdzenes, kas tiek uzstādītas modeļos PREMIUM un SKANDI INOX PLUSS. Tās ir profesionālas slēdzenes ar pastiprinātu aizsardzību pret ielaušanos. Maksimālai drošībai iesakām SKANDI INOX PLUSS ar divām MOTTURA 52 slēdzenēm.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q4">Cik ilgi aizņem izgatavošana un uzstādīšana?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a4">Precizējiet termiņus, pasūtot — tie ir atkarīgi no ražotnes noslodzes. Durvju uzstādīšana aizņem dažas stundas. Mēs saskaņojam jums ērtu laiku.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q5">Vai var pasūtīt nestandarta izmēru?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a5">Standarta maksimālais izmērs — 960×2060 mm. Nestandarta atvērumiem sazinieties ar mums — mēs izgatavojam durvis pēc individuāliem izmēriem. Divvērtņu durvis (DIVVIRU) tiek aprēķinātas individuāli.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q6">Kāda garantija uz durvīm?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a6">Mēs sniedzam oficiālu garantiju 2 gadi uz visiem darbiem un materiāliem. Servisa apkalpošana pieejama Rīgā, Jūrmalā, Jelgavā un Ogrē.</p>
+        </details>
+        <details>
+          <summary><span data-i18n="d_faq_q7">Kā jūsu durvis atšķiras no lētiem analogiem?</span> <span class="faq-icon">+</span></summary>
+          <p data-i18n="d_faq_a7">Mēs neražojam ekonomklases durvis. Izmantojam metālu 1.5–2.0 mm biezumā (budžeta durvīs bieži 0.8–1 mm), tikai kvalitatīvas MOTTURA un ASSA slēdzenes, minerālvates pildījumu. Mūsu durvis ir smagākas un uzticamākas — to var sajust uzreiz.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="dh-contact">
+    <div class="container">
+      <div class="dh-contact-grid">
+        <div>
+          <span class="dh-label" data-i18n="d_contact_lbl">Sazināties ar mums</span>
+          <h2 class="dh-h2 dh-h2-light" style="margin-bottom:16px" data-i18n="d_contact_title">Saņemt aprēķinu bez maksas</h2>
+          <p class="dh-sub-light" style="margin-bottom:36px" data-i18n="d_contact_desc">Atstājiet pieteikumu — mēs piezvanīsim un aprēķināsim izmaksas, ņemot vērā jūsu parametrus.</p>
+
+          <a href="tel:+37127221212" class="dh-contact-info-item" style="text-decoration:none">
+            <div class="ci-icon">📞</div>
+            <div>
+              <p class="ci-lbl" data-i18n="d_ci_phone_lbl">Tālrunis</p>
+              <p class="ci-val">+371 27-22-12-12</p>
+            </div>
+          </a>
+          <div class="dh-contact-info-item">
+            <div class="ci-icon">📍</div>
+            <div>
+              <p class="ci-lbl" data-i18n="d_ci_area_lbl">Darba zona</p>
+              <p class="ci-val" data-i18n="d_ci_area_val">Rīga, Latvija</p>
+            </div>
+          </div>
+          <div class="dh-contact-info-item">
+            <div class="ci-icon">🕐</div>
+            <div>
+              <p class="ci-lbl" data-i18n="d_ci_warranty_lbl">Garantija</p>
+              <p class="ci-val" data-i18n="d_ci_warranty_val">2 gadi uz visiem darbiem un materiāliem</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dh-form-box">
+          <div id="door-form-wrap">
+            <form id="door-form">
+              <div class="f-row">
+                <label data-i18n="d_f_name_lbl">Jūsu vārds</label>
+                <input type="text" id="df-name" data-i18n-placeholder="d_f_name_ph" placeholder="Jānis">
+              </div>
+              <div class="f-row">
+                <label data-i18n="d_f_phone_lbl">Tālrunis *</label>
+                <input type="tel" id="df-phone" placeholder="+371 __ ___ ___" required>
+              </div>
+              <div class="f-row">
+                <label data-i18n="d_f_model_lbl">Interesējošais modelis</label>
+                <select id="df-model">
+                  <option value="" data-i18n="d_f_model_none">Nav noteikts</option>
+                  <option>STANDART — 520 €</option>
+                  <option>BEST — 580 €</option>
+                  <option>PREMIUM — 610 €</option>
+                  <option>SKANDI — 640 €</option>
+                  <option>SKANDI INOX — 700 €</option>
+                  <option>SKANDI INOX PLUSS — 750 €</option>
+                  <option data-i18n="d_f_divviru_opt">DIVVIRU (divvērtņu durvis)</option>
+                </select>
+              </div>
+              <div class="f-row">
+                <label data-i18n="d_f_comment_lbl">Komentārs</label>
+                <textarea id="df-msg" rows="3" data-i18n-placeholder="d_f_comment_ph" placeholder="Atvēruma izmēri, papildu vēlmes..."></textarea>
+              </div>
+              <button type="submit" class="dh-form-btn" id="door-submit-btn" data-i18n="d_f_submit_btn">Saņemt aprēķinu bez maksas</button>
+              <p class="dh-form-note" data-i18n="d_f_note">Piezvanīsim darba dienas laikā</p>
+            </form>
+          </div>
+          <div class="dh-form-success" id="door-success">
+            <div class="ico">✅</div>
+            <h3 data-i18n="d_f_success_title">Pieteikums nosūtīts!</h3>
+            <p data-i18n="d_f_success_text">Mēs piezvanīsim jums darba dienas laikā.<br>Paldies par uzticēšanos!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SITE FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
       <span class="footer-logo">MĀJU<strong>DROŠĪBA</strong></span>
+      <nav class="footer-links">
+        <a href="../terms.html" data-i18n="footer_terms">Lietošanas noteikumi</a>
+        <a href="../privacy.html" data-i18n="footer_privacy">Privātuma politika</a>
+      </nav>
       <span class="footer-copy" data-i18n="footer_copy">&copy; 2025 Māju drošība. Visas tiesības aizsargātas.</span>
     </div>
   </footer>
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "MĀJU DROŠĪBA",
+    "description": "Metāla ieejas durvis Rīgā no ražotāja. Montāža iekļauta. Garantija 2 gadi.",
+    "telephone": "+37127221212",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Rīga",
+      "addressCountry": "LV"
+    },
+    "openingHours": "Mo-Fr 08:00-18:00",
+    "priceRange": "520€ - 750€"
+  }
+  </script>
+
   <script src="../js/main.js"></script>
   <script src="../js/i18n.js"></script>
   <script>
-    const CATEGORY = 'metal-doors';
-    fetch('/api/products?category=' + CATEGORY).then(r => r.ok ? r.json() : []).then(products => {
-      if (!products.length) return;
-      const lang = localStorage.getItem('lang') || 'lv';
-      document.getElementById('product-grid').innerHTML = products.map(p => `
-        <div class="product-card">
-          <div class="product-img">${p.image_url
-            ? `<img src="${p.image_url}" alt="${p['name_'+lang]||p.name_lv}" loading="lazy">`
-            : '<svg class="product-img-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="2" width="18" height="20" rx="1"/><circle cx="17" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>'}</div>
-          <div class="product-body">
-            <div class="product-name">${p['name_'+lang]||p.name_lv}</div>
-            <div class="product-desc">${p['desc_'+lang]||p.desc_lv||''}</div>
-            <div class="product-footer">
-              <div class="product-price">${p.price.toFixed(2)}<span> €</span></div>
-              <button class="btn btn-primary btn-add" onclick="addToCart(${p.id},'${(p['name_'+lang]||p.name_lv).replace(/'/g,"\\'")}',${p.price},this)">+ Cart</button>
-            </div>
-          </div>
-        </div>`).join('');
-    }).catch(() => {});
-    function addToCart(id, name, price, btn) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const ex = cart.find(i => i.id === id);
-      if (ex) ex.qty++; else cart.push({ id, name, price, qty: 1 });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      btn.textContent = '✓';
-      setTimeout(() => btn.textContent = '+ Cart', 1500);
-    }
+    document.getElementById('door-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('door-submit-btn');
+      const name  = document.getElementById('df-name').value.trim();
+      const phone = document.getElementById('df-phone').value.trim();
+      const model = document.getElementById('df-model').value;
+      const msg   = document.getElementById('df-msg').value.trim();
+
+      if (!phone) return;
+
+      btn.textContent = window.i18n ? window.i18n('d_f_sending') : '...';
+      btn.disabled = true;
+
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, service: model || 'Metāla durvis', message: msg })
+        });
+        document.getElementById('door-form-wrap').style.display = 'none';
+        document.getElementById('door-success').style.display = 'block';
+      } catch {
+        btn.innerHTML = window.i18n ? window.i18n('d_f_submit_btn') : 'Saņemt aprēķinu';
+        btn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>

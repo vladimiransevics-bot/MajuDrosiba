@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <style>
     body { background: #050d1a; color: #e8edf5; min-height: 100vh; }
@@ -41,6 +42,112 @@
     .product-img-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
     .order-items { font-size: 0.8rem; color: #8a9ab5; }
     select.form-input { appearance: auto; }
+
+    /* ── Description editors ── */
+    .desc-block { margin-bottom: 16px; }
+    .desc-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px; gap: 12px;
+    }
+    .btn-translate {
+      background: transparent; color: #f5a623;
+      border: 1px solid rgba(245,166,35,.45); border-radius: 6px;
+      padding: 4px 12px; font-size: .75rem; cursor: pointer;
+      font-family: inherit; font-weight: 600;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-translate:hover { background: rgba(245,166,35,.1); border-color: #f5a623; }
+    .btn-translate:disabled { opacity: .5; cursor: wait; }
+
+    /* Quill dark-theme overrides */
+    .ql-toolbar.ql-snow {
+      background: #0d1f38;
+      border: 1px solid #1e2d45 !important;
+      border-radius: 8px 8px 0 0;
+    }
+    .ql-toolbar.ql-snow .ql-stroke { stroke: #8a9ab5; }
+    .ql-toolbar.ql-snow .ql-fill { fill: #8a9ab5; }
+    .ql-toolbar.ql-snow .ql-picker-label { color: #8a9ab5; }
+    .ql-toolbar.ql-snow button:hover .ql-stroke,
+    .ql-toolbar.ql-snow button.ql-active .ql-stroke,
+    .ql-toolbar.ql-snow .ql-picker-label:hover,
+    .ql-toolbar.ql-snow .ql-picker-label.ql-active { stroke: #f5a623; color: #f5a623; }
+    .ql-toolbar.ql-snow button:hover .ql-fill,
+    .ql-toolbar.ql-snow button.ql-active .ql-fill { fill: #f5a623; }
+    .ql-container.ql-snow {
+      background: #0a1628;
+      border: 1px solid #1e2d45 !important;
+      border-top: none !important;
+      border-radius: 0 0 8px 8px;
+      font-family: inherit;
+      font-size: .92rem;
+    }
+    .ql-editor {
+      color: #e8edf5;
+      min-height: 110px;
+    }
+    .ql-editor.ql-blank::before {
+      color: #6b86a8 !important;
+      font-style: normal !important;
+    }
+    .ql-snow .ql-picker-options {
+      background: #0d1f38 !important;
+      border-color: #1e2d45 !important;
+    }
+    .ql-snow .ql-picker-options .ql-picker-item { color: #e8edf5; }
+    .ql-snow a { color: #f5a623; }
+
+    /* ── Image upload ── */
+    .img-upload-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .img-upload-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .img-preview { margin-top: 4px; }
+    .img-preview img {
+      max-width: 200px; max-height: 200px; border-radius: 8px;
+      object-fit: cover; border: 1px solid #1e2d45;
+    }
+    .upload-status { font-size: .78rem; color: #8a9ab5; }
+
+    /* ── Customer-type badges in orders ── */
+    .badge-jur, .badge-fiz {
+      display: inline-block; padding: 1px 7px; border-radius: 4px;
+      font-size: .68rem; font-weight: 700; margin-left: 4px; vertical-align: middle;
+    }
+    .badge-jur { background: rgba(245,166,35,.18); color: #f5a623; border: 1px solid rgba(245,166,35,.4); }
+    .badge-fiz { background: rgba(96,184,255,.12); color: #60b8ff; border: 1px solid rgba(96,184,255,.3); }
+
+    /* ── Bulk-delete button ── */
+    .btn-delete-sel {
+      background: #c0392b; color: #fff; border: none;
+      padding: 5px 14px; border-radius: 6px; font-size: .82rem;
+      font-weight: 700; cursor: pointer;
+    }
+    .btn-delete-sel:hover { background: #a93226; }
+    .col-check { width: 36px; text-align: center; }
+
+    /* ── Category row clickable ── */
+    .cat-row { cursor: pointer; transition: background .15s; }
+    .cat-row:hover { background: rgba(245,166,35,.05); }
+    .cat-row.selected { background: rgba(245,166,35,.1); outline: 2px solid rgba(245,166,35,.3); outline-offset: -1px; }
+    .cat-count-btn {
+      background: rgba(245,166,35,.15); border: 1px solid rgba(245,166,35,.35);
+      color: #f5a623; border-radius: 5px; padding: 2px 10px;
+      font-size: .82rem; font-weight: 700; cursor: pointer;
+    }
+    .cat-count-btn:hover { background: rgba(245,166,35,.28); }
+
+    /* ── Category products panel ── */
+    #cat-products-panel {
+      margin-top: 20px; border: 1px solid rgba(245,166,35,.25);
+      border-radius: 10px; overflow: hidden;
+    }
+    .cat-products-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; background: rgba(245,166,35,.07);
+      border-bottom: 1px solid rgba(245,166,35,.15);
+    }
+    #cat-products-title {
+      font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: .95rem; color: #f5a623;
+    }
   </style>
 </head>
 <body>
@@ -53,6 +160,8 @@
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="products">Produkti</button>
       <button class="tab-btn" data-tab="orders">Pasūtījumi</button>
+      <button class="tab-btn" data-tab="carousels">Karusels</button>
+      <button class="tab-btn" data-tab="categories">Kategorijas</button>
     </div>
 
     <!-- PRODUCTS PANEL -->
@@ -64,13 +173,17 @@
       <div class="product-form" id="product-form">
         <h3 style="margin:0 0 16px;font-family:'Exo 2',sans-serif" id="form-title">Jauns produkts</h3>
         <input type="hidden" id="f-id">
-        <div class="form-row-2">
+        <div class="form-row">
           <div>
             <label class="form-label">Kategorija</label>
             <select class="form-input" id="f-category"></select>
           </div>
           <div>
-            <label class="form-label">Cena (€)</label>
+            <label class="form-label">SKU (artikuls)</label>
+            <input type="text" class="form-input" id="f-sku" placeholder="auto: MD-XXXX">
+          </div>
+          <div>
+            <label class="form-label">Cena (€, bez PVN)</label>
             <input type="number" step="0.01" class="form-input" id="f-price" placeholder="0.00">
           </div>
         </div>
@@ -88,33 +201,68 @@
             <input type="text" class="form-input" id="f-name-en">
           </div>
         </div>
-        <div class="form-row">
-          <div>
-            <label class="form-label">Apraksts LV</label>
-            <input type="text" class="form-input" id="f-desc-lv">
+        <div class="desc-editors">
+          <div class="desc-block">
+            <div class="desc-header">
+              <label class="form-label" style="margin:0">Apraksts LV</label>
+              <button type="button" class="btn-translate" data-from="lv">Tulkot → RU + EN</button>
+            </div>
+            <div id="editor-lv"></div>
           </div>
-          <div>
-            <label class="form-label">Apraksts RU</label>
-            <input type="text" class="form-input" id="f-desc-ru">
+          <div class="desc-block">
+            <div class="desc-header">
+              <label class="form-label" style="margin:0">Apraksts RU</label>
+              <button type="button" class="btn-translate" data-from="ru">Tulkot → LV + EN</button>
+            </div>
+            <div id="editor-ru"></div>
           </div>
-          <div>
-            <label class="form-label">Apraksts EN</label>
-            <input type="text" class="form-input" id="f-desc-en">
+          <div class="desc-block">
+            <div class="desc-header">
+              <label class="form-label" style="margin:0">Apraksts EN</label>
+              <button type="button" class="btn-translate" data-from="en">Tulkot → LV + RU</button>
+            </div>
+            <div id="editor-en"></div>
           </div>
         </div>
         <div class="form-row-2">
           <div>
-            <label class="form-label">Attēla URL</label>
-            <input type="text" class="form-input" id="f-image" placeholder="https://...">
+            <label class="form-label">Attēls</label>
+            <div class="img-upload-wrap">
+              <div class="img-upload-row">
+                <input type="file" accept="image/*" id="f-image-file" style="display:none">
+                <button type="button" class="btn btn-ghost btn-sm" id="btn-pick-image">📷 Augšupielādēt no datora / tālruņa</button>
+                <span class="upload-status" id="upload-status"></span>
+              </div>
+              <input type="text" class="form-input" id="f-image" placeholder="vai ielīmējiet URL: https://...">
+              <div class="img-preview" id="img-preview"></div>
+            </div>
           </div>
           <div>
-            <label class="form-label">Noliktavā</label>
+            <label class="form-label">Pieejamība</label>
             <select class="form-input" id="f-instock">
-              <option value="1">Jā</option>
-              <option value="0">Nē</option>
+              <option value="1">Noliktavā</option>
+              <option value="0">Pēc pasūtījuma</option>
             </select>
           </div>
         </div>
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Kārtošanas svars (augstāks = augstāk veikalā)</label>
+            <input type="number" class="form-input" id="f-display-order" value="0" step="1">
+          </div>
+        </div>
+        <div id="gallery-section" style="display:none">
+          <label class="form-label">Papildu attēli</label>
+          <div id="gallery-grid" class="gallery-grid"></div>
+          <div class="img-upload-row">
+            <input type="file" accept="image/*" id="f-gallery-file" style="display:none" multiple>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-add-gallery-img">+ Pievienot attēlu</button>
+            <span class="upload-status" id="gallery-upload-status"></span>
+          </div>
+        </div>
+        <p id="gallery-hint" style="color:var(--text-muted,#8a9ab5);font-size:13px;margin:8px 0">
+          Saglabājiet produktu vispirms, lai pievienotu papildu attēlus.
+        </p>
         <div class="form-actions">
           <button class="btn btn-primary btn-sm" id="btn-save-product">Saglabāt</button>
           <button class="btn btn-ghost btn-sm" id="btn-cancel-product">Atcelt</button>
@@ -125,15 +273,127 @@
         <thead>
           <tr>
             <th>Attēls</th>
+            <th>SKU</th>
             <th>Nosaukums</th>
             <th>Kategorija</th>
             <th>Cena</th>
-            <th>Noliktavā</th>
+            <th>Pieejamība</th>
             <th>Darbības</th>
           </tr>
         </thead>
         <tbody id="products-tbody"></tbody>
       </table>
+    </div>
+
+    <!-- CAROUSELS PANEL -->
+    <div class="panel" id="panel-carousels">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+        <label style="color:#8a9ab5;font-size:.9rem">Pakalpojums:</label>
+        <select class="form-input" id="car-service-sel" style="width:240px">
+          <option value="video">Videonovērošana</option>
+          <option value="access-control">Piekļuves kontrole</option>
+          <option value="locks">Slēdzenes</option>
+          <option value="safes">Seifi</option>
+          <option value="fire-alarm">Ugunsdrošības signalizācija</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" id="btn-load-car">Ielādēt</button>
+      </div>
+      <div id="car-editor" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <h3 style="margin:0;font-size:.95rem;font-family:'Exo 2',sans-serif">
+            Izvēlētie produkti (<span id="car-count">0</span>/10)
+          </h3>
+          <button class="btn btn-primary btn-sm" id="btn-save-car">Saglabāt</button>
+        </div>
+        <div id="car-selected" style="min-height:48px;margin-bottom:20px"></div>
+        <h3 style="margin:0 0 8px;font-size:.9rem;color:#8a9ab5">Pievienot produktu</h3>
+        <input type="text" class="form-input" id="car-search"
+          placeholder="Meklēt pēc nosaukuma..."
+          style="width:100%;max-width:400px;margin-bottom:10px">
+        <div id="car-product-list"
+          style="max-height:300px;overflow-y:auto;border:1px solid #1e2d45;border-radius:8px"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES PANEL -->
+    <div class="panel" id="panel-categories">
+      <div class="add-btn-wrap">
+        <button class="btn btn-primary" id="btn-add-cat">+ Pievienot kategoriju</button>
+      </div>
+      <div class="product-form" id="cat-form">
+        <h3 style="margin:0 0 16px;font-family:'Exo 2',sans-serif" id="cat-form-title">Jauna kategorija</h3>
+        <input type="hidden" id="cf-orig-id">
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">ID (mazie burti, defises)</label>
+            <input type="text" class="form-input" id="cf-id" placeholder="piem. video-special">
+          </div>
+          <div>
+            <label class="form-label">Vecāks (tukšs = top-level)</label>
+            <select class="form-input" id="cf-parent">
+              <option value="">— (top-level) —</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label">Nosaukums LV</label>
+            <input type="text" class="form-input" id="cf-name-lv">
+          </div>
+          <div>
+            <label class="form-label">Nosaukums RU</label>
+            <input type="text" class="form-input" id="cf-name-ru">
+          </div>
+          <div>
+            <label class="form-label">Nosaukums EN</label>
+            <input type="text" class="form-input" id="cf-name-en">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div>
+            <label class="form-label">Secības numurs (mazāks → augstāk sarakstā)</label>
+            <input type="number" class="form-input" id="cf-sort" value="0" step="1">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" id="btn-save-cat">Saglabāt</button>
+          <button class="btn btn-ghost btn-sm" id="btn-cancel-cat">Atcelt</button>
+        </div>
+      </div>
+      <table class="admin-table" id="cat-table">
+        <thead>
+          <tr>
+            <th>Nosaukums</th>
+            <th>ID</th>
+            <th>Vecāks</th>
+            <th>Secība</th>
+            <th>Produkti</th>
+            <th>Darbības</th>
+          </tr>
+        </thead>
+        <tbody id="cat-tbody"></tbody>
+      </table>
+
+      <div id="cat-products-panel" style="display:none">
+        <div class="cat-products-header">
+          <span id="cat-products-title">Produkti</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-sm btn-delete-sel" id="btn-delete-selected" style="display:none">
+              Dzēst (<span id="selected-count">0</span>)
+            </button>
+            <button class="btn btn-ghost btn-sm" id="btn-close-cat-products">✕ Aizvērt</button>
+          </div>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" id="cat-check-all" title="Izvēlēties visus"></th>
+              <th>Att.</th><th>Nosaukums</th><th>Apakškat.</th><th>Cena</th><th>Nolikt.</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="cat-products-tbody"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- ORDERS PANEL -->
@@ -155,10 +415,39 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
   <script>
     let allProducts = [];
     let allCategories = [];
     let editingId = null;
+    let quillLv = null, quillRu = null, quillEn = null;
+
+    function ensureQuill() {
+      if (quillLv) return;
+      const opts = {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            [{ 'header': [2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['link'],
+            ['clean']
+          ]
+        },
+        placeholder: 'Apraksts...'
+      };
+      quillLv = new Quill('#editor-lv', opts);
+      quillRu = new Quill('#editor-ru', opts);
+      quillEn = new Quill('#editor-en', opts);
+    }
+    function getEditor(lang) {
+      return lang === 'lv' ? quillLv : lang === 'ru' ? quillRu : quillEn;
+    }
+    function getDescHtml(q) {
+      const html = q.root.innerHTML.trim();
+      return (html === '<p><br></p>' || html === '<p></p>') ? '' : html;
+    }
 
     // Tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -170,12 +459,37 @@
       });
     });
 
-    // Load categories
+    // Build flat hierarchical list (top → sub, indented label)
+    function flattenedCategories() {
+      const tops = allCategories.filter(c => !c.parent_id).sort((a, b) => (a.sort_order||0) - (b.sort_order||0) || a.id.localeCompare(b.id));
+      const out = [];
+      tops.forEach(t => {
+        out.push({ ...t, _label: t.name_lv });
+        allCategories
+          .filter(c => c.parent_id === t.id)
+          .sort((a, b) => (a.sort_order||0) - (b.sort_order||0) || a.id.localeCompare(b.id))
+          .forEach(s => out.push({ ...s, _label: '  ↳ ' + s.name_lv }));
+      });
+      // Append any orphans (parent_id set to non-existent)
+      allCategories.filter(c => c.parent_id && !allCategories.find(x => x.id === c.parent_id))
+        .forEach(o => out.push({ ...o, _label: '(orphan) ' + o.name_lv }));
+      return out;
+    }
+
     async function loadCategories() {
       const res = await fetch('/api/categories');
       allCategories = res.ok ? await res.json() : [];
+      const flat = flattenedCategories();
       const sel = document.getElementById('f-category');
-      sel.innerHTML = allCategories.map(c => `<option value="${c.id}">${c.name_lv}</option>`).join('');
+      sel.innerHTML = flat.map(c => `<option value="${c.id}">${c._label}</option>`).join('');
+      // Category form's parent dropdown
+      const psel = document.getElementById('cf-parent');
+      if (psel) {
+        psel.innerHTML = '<option value="">— (top-level) —</option>' +
+          allCategories.filter(c => !c.parent_id)
+            .map(c => `<option value="${c.id}">${c.name_lv}</option>`).join('');
+      }
+      renderCatTable();
     }
 
     // Load & render products
@@ -183,22 +497,26 @@
       const res = await fetch('/api/products/all');
       allProducts = res.ok ? await res.json() : [];
       renderProducts();
+      renderCatTable();
     }
 
     function renderProducts() {
       const tbody = document.getElementById('products-tbody');
       if (!allProducts.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="color:#8a9ab5;text-align:center;padding:24px">Nav produktu</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="color:#8a9ab5;text-align:center;padding:24px">Nav produktu</td></tr>';
         return;
       }
       tbody.innerHTML = allProducts.map(p => {
         const cat = allCategories.find(c => c.id === p.category_id);
         return `<tr>
           <td>${p.image_url ? `<img src="${p.image_url}" class="product-img-thumb">` : '—'}</td>
+          <td><code style="font-size:.78rem;color:#8a9ab5">${p.sku || '—'}</code></td>
           <td>${p.name_lv}</td>
           <td>${cat ? cat.name_lv : p.category_id}</td>
           <td>${p.price.toFixed(2)} €</td>
-          <td>${p.in_stock ? '✓' : '✗'}</td>
+          <td>${p.in_stock
+            ? '<span style="color:#4caf7d">✓ Noliktavā</span>'
+            : '<span style="color:#f5a623">⏱ Pēc pas.</span>'}</td>
           <td>
             <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Rediģēt</button>
             <button class="btn-danger" onclick="deleteProduct(${p.id})">Dzēst</button>
@@ -220,11 +538,21 @@
         const items = JSON.parse(o.items || '[]');
         const statusClass = o.status === 'new' ? 'badge-new' : o.status === 'done' ? 'badge-done' : 'badge-canceled';
         const date = new Date(o.created_at).toLocaleDateString('lv-LV');
+        const isLegal = o.customer_type === 'legal';
+        const typeBadge = isLegal
+          ? '<span class="badge-jur">Jur.</span>'
+          : '<span class="badge-fiz">Fiz.</span>';
+        const customerCell = isLegal
+          ? `<strong>${o.company_name || '?'}</strong>
+             <br><small style="color:#8a9ab5">Reģ.Nr: ${o.reg_nr || '—'}${o.vat_nr ? ' · PVN: ' + o.vat_nr : ''}</small>
+             <br><small style="color:#8a9ab5">Jur. adrese: ${o.legal_address || '—'}</small>
+             <br><small style="color:#8a9ab5">Kontakts: ${o.name}${o.email ? ' · ' + o.email : ''}</small>`
+          : `${o.name}<br><small style="color:#8a9ab5">${o.email || ''}</small>`;
         return `<tr>
-          <td>#${o.id}</td>
-          <td>${o.name}<br><small style="color:#8a9ab5">${o.email||''}</small></td>
+          <td>#${o.id} ${typeBadge}</td>
+          <td>${customerCell}</td>
           <td>${o.phone}</td>
-          <td class="order-items">${items.map(i => `${i.name} × ${i.qty}`).join('<br>')}</td>
+          <td class="order-items">${items.map(i => `${i.name}${i.sku ? ` <code style="color:#8a9ab5;font-size:.74rem">(${i.sku})</code>` : ''} × ${i.qty}`).join('<br>')}</td>
           <td>${o.total.toFixed(2)} €</td>
           <td>
             <select class="form-input" style="padding:4px 8px;font-size:.78rem" onchange="updateStatus(${o.id}, this.value)">
@@ -242,9 +570,14 @@
     // Product form
     document.getElementById('btn-add-product').addEventListener('click', () => {
       editingId = null;
+      currentGalleryProductId = null;
       clearForm();
       document.getElementById('form-title').textContent = 'Jauns produkts';
+      document.getElementById('gallery-section').style.display = 'none';
+      document.getElementById('gallery-hint').style.display = '';
       document.getElementById('product-form').classList.add('open');
+      ensureQuill();
+      quillLv.setText(''); quillRu.setText(''); quillEn.setText('');
     });
 
     document.getElementById('btn-cancel-product').addEventListener('click', () => {
@@ -252,10 +585,13 @@
     });
 
     function clearForm() {
-      ['f-id','f-price','f-name-lv','f-name-ru','f-name-en','f-desc-lv','f-desc-ru','f-desc-en','f-image'].forEach(id => {
+      ['f-id','f-sku','f-price','f-name-lv','f-name-ru','f-name-en','f-image'].forEach(id => {
         document.getElementById(id).value = '';
       });
       document.getElementById('f-instock').value = '1';
+      document.getElementById('f-display-order').value = '0';
+      document.getElementById('img-preview').innerHTML = '';
+      document.getElementById('upload-status').textContent = '';
     }
 
     function editProduct(id) {
@@ -264,32 +600,44 @@
       editingId = id;
       document.getElementById('f-id').value = p.id;
       document.getElementById('f-category').value = p.category_id;
+      document.getElementById('f-sku').value = p.sku || '';
       document.getElementById('f-price').value = p.price;
       document.getElementById('f-name-lv').value = p.name_lv;
       document.getElementById('f-name-ru').value = p.name_ru;
       document.getElementById('f-name-en').value = p.name_en;
-      document.getElementById('f-desc-lv').value = p.desc_lv || '';
-      document.getElementById('f-desc-ru').value = p.desc_ru || '';
-      document.getElementById('f-desc-en').value = p.desc_en || '';
       document.getElementById('f-image').value = p.image_url || '';
       document.getElementById('f-instock').value = p.in_stock ? '1' : '0';
+      document.getElementById('f-display-order').value = p.display_order || 0;
       document.getElementById('form-title').textContent = 'Rediģēt produktu';
       document.getElementById('product-form').classList.add('open');
+      ensureQuill();
+      quillLv.root.innerHTML = p.desc_lv || '';
+      quillRu.root.innerHTML = p.desc_ru || '';
+      quillEn.root.innerHTML = p.desc_en || '';
+      updateImgPreview(p.image_url || '');
+      document.getElementById('upload-status').textContent = '';
+      document.getElementById('gallery-section').style.display = '';
+      document.getElementById('gallery-hint').style.display = 'none';
+      document.getElementById('gallery-upload-status').textContent = '';
+      loadGalleryImages(p.id);
       document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
     }
 
     document.getElementById('btn-save-product').addEventListener('click', async () => {
+      ensureQuill();
       const payload = {
         category_id: document.getElementById('f-category').value,
+        sku: document.getElementById('f-sku').value.trim(),
         price: parseFloat(document.getElementById('f-price').value) || 0,
         name_lv: document.getElementById('f-name-lv').value.trim(),
         name_ru: document.getElementById('f-name-ru').value.trim(),
         name_en: document.getElementById('f-name-en').value.trim(),
-        desc_lv: document.getElementById('f-desc-lv').value.trim(),
-        desc_ru: document.getElementById('f-desc-ru').value.trim(),
-        desc_en: document.getElementById('f-desc-en').value.trim(),
+        desc_lv: getDescHtml(quillLv),
+        desc_ru: getDescHtml(quillRu),
+        desc_en: getDescHtml(quillEn),
         image_url: document.getElementById('f-image').value.trim(),
-        in_stock: parseInt(document.getElementById('f-instock').value)
+        in_stock: parseInt(document.getElementById('f-instock').value),
+        display_order: parseInt(document.getElementById('f-display-order').value) || 0
       };
       if (!payload.name_lv || !payload.name_ru || !payload.name_en) {
         alert('Aizpildiet visus nosaukumus!');
@@ -297,9 +645,149 @@
       }
       const url = editingId ? `/api/products/${editingId}` : '/api/products';
       const method = editingId ? 'PUT' : 'POST';
-      await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'unknown' }));
+        alert('Kļūda: ' + err.error);
+        return;
+      }
       document.getElementById('product-form').classList.remove('open');
       await loadProducts();
+    });
+
+    // ── Image upload ──
+    function updateImgPreview(url) {
+      const el = document.getElementById('img-preview');
+      el.innerHTML = url ? `<img src="${url}" alt="">` : '';
+    }
+    document.getElementById('btn-pick-image').addEventListener('click', () => {
+      document.getElementById('f-image-file').click();
+    });
+    document.getElementById('f-image').addEventListener('input', e => updateImgPreview(e.target.value.trim()));
+    document.getElementById('f-image-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) { alert('Fails pārāk liels (max 8MB)'); return; }
+      const status = document.getElementById('upload-status');
+      status.textContent = 'Augšupielāde...';
+      try {
+        const data = await new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result.split(',')[1]);
+          r.onerror = reject;
+          r.readAsDataURL(file);
+        });
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, data })
+        });
+        if (!res.ok) throw new Error('upload failed');
+        const { url } = await res.json();
+        document.getElementById('f-image').value = url;
+        updateImgPreview(url);
+        status.textContent = '✓ Augšupielādēts';
+        e.target.value = '';
+      } catch (err) {
+        status.textContent = '✗ Kļūda: ' + err.message;
+      }
+    });
+
+    // ── Gallery images ──
+    let currentGalleryProductId = null;
+
+    async function loadGalleryImages(productId) {
+      currentGalleryProductId = productId;
+      const grid = document.getElementById('gallery-grid');
+      grid.innerHTML = '';
+      const imgs = await fetch(`/api/products/${productId}/images`).then(r => r.ok ? r.json() : []);
+      imgs.forEach(img => addGalleryThumb(img.id, img.image_url));
+    }
+
+    function addGalleryThumb(imgId, url) {
+      const grid = document.getElementById('gallery-grid');
+      const wrap = document.createElement('div');
+      wrap.className = 'gallery-thumb-wrap';
+      wrap.innerHTML = `<img src="${url}" alt=""><button class="gallery-thumb-del" title="Dzēst">✕</button>`;
+      wrap.querySelector('.gallery-thumb-del').addEventListener('click', async () => {
+        await fetch(`/api/products/images/${imgId}`, { method: 'DELETE' });
+        wrap.remove();
+      });
+      grid.appendChild(wrap);
+    }
+
+    document.getElementById('btn-add-gallery-img').addEventListener('click', () => {
+      if (!currentGalleryProductId) return;
+      document.getElementById('f-gallery-file').click();
+    });
+
+    document.getElementById('f-gallery-file').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length || !currentGalleryProductId) return;
+      const status = document.getElementById('gallery-upload-status');
+      status.textContent = 'Augšupielāde...';
+      try {
+        for (const file of files) {
+          if (file.size > 8 * 1024 * 1024) { alert('Fails pārāk liels (max 8MB)'); continue; }
+          const data = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result.split(',')[1]);
+            r.onerror = reject;
+            r.readAsDataURL(file);
+          });
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, data })
+          });
+          if (!uploadRes.ok) throw new Error('upload failed');
+          const { url } = await uploadRes.json();
+          const addRes = await fetch(`/api/products/${currentGalleryProductId}/images`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_url: url })
+          });
+          const { id: imgId } = await addRes.json();
+          addGalleryThumb(imgId, url);
+        }
+        status.textContent = '✓ Augšupielādēts';
+        e.target.value = '';
+      } catch (err) {
+        status.textContent = '✗ Kļūda: ' + err.message;
+      }
+    });
+
+    // ── Translate buttons ──
+    document.querySelectorAll('.btn-translate').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        ensureQuill();
+        const from = btn.dataset.from;
+        const source = getEditor(from);
+        const text = source.getText().trim();
+        if (!text) { alert('Nav teksta tulkošanai'); return; }
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Tulko...';
+        const html = getDescHtml(source);
+        const targets = ['lv','ru','en'].filter(l => l !== from);
+        try {
+          for (const to of targets) {
+            const res = await fetch('/api/translate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: html || text, from, to })
+            });
+            const { translated, error } = await res.json();
+            if (error) throw new Error(error);
+            getEditor(to).root.innerHTML = translated;
+          }
+          btn.textContent = '✓';
+          setTimeout(() => { btn.textContent = original; }, 1500);
+        } catch (e) {
+          alert('Tulkošanas kļūda: ' + e.message);
+          btn.textContent = original;
+        } finally {
+          btn.disabled = false;
+        }
+      });
     });
 
     async function deleteProduct(id) {
@@ -316,10 +804,297 @@
       });
     }
 
+    // ── Carousels ──────────────────────────────────────────────────────────
+    let carSelected = [];
+
+    document.getElementById('btn-load-car').addEventListener('click', async () => {
+      const service = document.getElementById('car-service-sel').value;
+      const res = await fetch('/api/carousel/' + service);
+      carSelected = res.ok ? await res.json() : [];
+      document.getElementById('car-editor').style.display = 'block';
+      renderCarSelected();
+      renderCarList('');
+    });
+
+    function renderCarSelected() {
+      document.getElementById('car-count').textContent = carSelected.length;
+      const el = document.getElementById('car-selected');
+      if (!carSelected.length) {
+        el.innerHTML = '<p style="color:#8a9ab5;font-size:.85rem;margin:0">Nav izvēlētu produktu</p>';
+        return;
+      }
+      el.innerHTML = carSelected.map(p => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0d1f38;border-radius:8px;margin-bottom:6px">
+          ${p.image_url ? `<img src="${p.image_url}" style="width:40px;height:40px;object-fit:cover;border-radius:4px">` : '<div style="width:40px;height:40px;background:#1e2d45;border-radius:4px;flex-shrink:0"></div>'}
+          <span style="flex:1;font-size:.88rem">${p.name_lv}</span>
+          <span style="color:#f5a623;font-size:.82rem;margin-right:8px">${p.price.toFixed(2)} €</span>
+          <button class="btn-danger" style="padding:4px 10px;font-size:.78rem" onclick="carRemove(${p.id})">✕</button>
+        </div>`).join('');
+    }
+
+    function renderCarList(filter) {
+      const selectedIds = carSelected.map(p => p.id);
+      let list = allProducts.filter(p => !selectedIds.includes(p.id));
+      if (filter) list = list.filter(p => p.name_lv.toLowerCase().includes(filter.toLowerCase()));
+      const el = document.getElementById('car-product-list');
+      el.innerHTML = list.length ? list.map(p => `
+        <div onclick="carAdd(${p.id})"
+          style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid #1e2d45;transition:background .15s"
+          onmouseover="this.style.background='rgba(245,166,35,.07)'"
+          onmouseout="this.style.background=''">
+          ${p.image_url ? `<img src="${p.image_url}" style="width:36px;height:36px;object-fit:cover;border-radius:4px">` : '<div style="width:36px;height:36px;background:#1e2d45;border-radius:4px;flex-shrink:0"></div>'}
+          <span style="flex:1;font-size:.86rem">${p.name_lv}</span>
+          <span style="color:#8a9ab5;font-size:.8rem">${p.price.toFixed(2)} €</span>
+        </div>`).join('')
+        : '<p style="padding:14px;color:#8a9ab5;font-size:.85rem;margin:0">Nav produktu</p>';
+    }
+
+    function carAdd(id) {
+      if (carSelected.length >= 10) { alert('Maksimāli 10 produkti karuselī!'); return; }
+      const p = allProducts.find(x => x.id === id);
+      if (p && !carSelected.find(x => x.id === id)) {
+        carSelected.push(p);
+        renderCarSelected();
+        renderCarList(document.getElementById('car-search').value);
+      }
+    }
+
+    function carRemove(id) {
+      carSelected = carSelected.filter(p => p.id !== id);
+      renderCarSelected();
+      renderCarList(document.getElementById('car-search').value);
+    }
+
+    document.getElementById('car-search').addEventListener('input', e => renderCarList(e.target.value));
+
+    document.getElementById('btn-save-car').addEventListener('click', async () => {
+      const service = document.getElementById('car-service-sel').value;
+      const res = await fetch('/api/carousel/' + service, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_ids: carSelected.map(p => p.id) })
+      });
+      if (res.ok) alert('Karuselis saglabāts!');
+    });
+
+    // ── Categories CRUD ──
+    let editingCatId = null;
+
+    function renderCatTable() {
+      const tbody = document.getElementById('cat-tbody');
+      if (!tbody) return;
+      const flat = flattenedCategories();
+      const productCounts = {};
+      allProducts.forEach(p => { productCounts[p.category_id] = (productCounts[p.category_id]||0) + 1; });
+      tbody.innerHTML = flat.map(c => {
+        const parentName = c.parent_id ? (allCategories.find(x => x.id === c.parent_id) || {name_lv:'?'}).name_lv : '—';
+        const totalCount = getCatDescendantIds(c.id).reduce((s, id) => s + (productCounts[id] || 0), 0);
+        const countLabel = totalCount > 0
+          ? `<button class="cat-count-btn" onclick="event.stopPropagation();showCatProducts('${c.id}')">${totalCount}</button>`
+          : `<span style="color:#8a9ab5">0</span>`;
+        return `<tr class="cat-row" data-catid="${c.id}">
+          <td>${c._label}</td>
+          <td><code style="font-size:.78rem;color:#8a9ab5">${c.id}</code></td>
+          <td>${parentName}</td>
+          <td>${c.sort_order || 0}</td>
+          <td>${countLabel}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editCategory('${c.id}')">Rediģēt</button>
+            <button class="btn-danger" onclick="event.stopPropagation();deleteCategory('${c.id}')">Dzēst</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Category row click → show products
+    document.getElementById('cat-tbody').addEventListener('click', function(e) {
+      if (e.target.closest('button')) return;
+      const row = e.target.closest('tr[data-catid]');
+      if (!row) return;
+      document.querySelectorAll('#cat-tbody tr.cat-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+      showCatProducts(row.dataset.catid);
+    });
+
+    document.getElementById('btn-close-cat-products').addEventListener('click', () => {
+      document.getElementById('cat-products-panel').style.display = 'none';
+      document.querySelectorAll('#cat-tbody tr.cat-row').forEach(r => r.classList.remove('selected'));
+    });
+
+    // Select-all checkbox
+    document.getElementById('cat-check-all').addEventListener('change', function() {
+      document.querySelectorAll('#cat-products-tbody .cat-prod-check').forEach(cb => { cb.checked = this.checked; });
+      updateCatSelection();
+    });
+
+    // Individual checkbox delegation
+    document.getElementById('cat-products-tbody').addEventListener('change', function(e) {
+      if (e.target.classList.contains('cat-prod-check')) updateCatSelection();
+    });
+
+    // Bulk delete
+    document.getElementById('btn-delete-selected').addEventListener('click', async () => {
+      const checked = Array.from(document.querySelectorAll('#cat-products-tbody .cat-prod-check:checked'));
+      if (!checked.length) return;
+      if (!confirm('Dzēst ' + checked.length + ' produktus? To nevar atcelt.')) return;
+      for (const cb of checked) {
+        await fetch('/api/products/' + cb.dataset.id, { method: 'DELETE' });
+      }
+      await loadProducts();
+      const sel = document.querySelector('#cat-tbody tr.cat-row.selected');
+      if (sel) showCatProducts(sel.dataset.catid);
+      else document.getElementById('cat-products-panel').style.display = 'none';
+    });
+
+    function updateCatSelection() {
+      const all = document.querySelectorAll('#cat-products-tbody .cat-prod-check');
+      const checked = document.querySelectorAll('#cat-products-tbody .cat-prod-check:checked');
+      const delBtn = document.getElementById('btn-delete-selected');
+      document.getElementById('selected-count').textContent = checked.length;
+      delBtn.style.display = checked.length > 0 ? '' : 'none';
+      const ca = document.getElementById('cat-check-all');
+      ca.indeterminate = checked.length > 0 && checked.length < all.length;
+      ca.checked = all.length > 0 && checked.length === all.length;
+    }
+
+    async function deleteCatProduct(id) {
+      if (!confirm('Dzēst šo produktu?')) return;
+      await fetch('/api/products/' + id, { method: 'DELETE' });
+      await loadProducts();
+      const sel = document.querySelector('#cat-tbody tr.cat-row.selected');
+      if (sel) showCatProducts(sel.dataset.catid);
+    }
+
+    function getCatDescendantIds(catId) {
+      const result = [catId];
+      let changed = true;
+      while (changed) {
+        changed = false;
+        allCategories.forEach(c => {
+          if (c.parent_id && result.includes(c.parent_id) && !result.includes(c.id)) {
+            result.push(c.id); changed = true;
+          }
+        });
+      }
+      return result;
+    }
+
+    function showCatProducts(catId) {
+      const cat = allCategories.find(c => c.id === catId);
+      const catName = cat ? cat.name_lv : catId;
+      const descIds = getCatDescendantIds(catId);
+      const products = allProducts.filter(p => descIds.includes(p.category_id));
+
+      document.getElementById('cat-products-title').textContent = catName + ' — ' + products.length + ' produkti';
+
+      // Reset selection UI
+      document.getElementById('btn-delete-selected').style.display = 'none';
+      document.getElementById('selected-count').textContent = '0';
+      const checkAll = document.getElementById('cat-check-all');
+      checkAll.checked = false;
+      checkAll.indeterminate = false;
+
+      const tbody = document.getElementById('cat-products-tbody');
+      if (!products.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:#8a9ab5;text-align:center;padding:20px">Nav produktu šajā kategorijā</td></tr>';
+      } else {
+        tbody.innerHTML = products.map(p => {
+          const subCat = allCategories.find(c => c.id === p.category_id);
+          const subLabel = subCat && subCat.id !== catId ? `<code style="font-size:.75rem;color:#8a9ab5">${subCat.name_lv}</code>` : '—';
+          return `<tr data-pid="${p.id}">
+            <td class="col-check"><input type="checkbox" class="cat-prod-check" data-id="${p.id}"></td>
+            <td>${p.image_url ? `<img src="${p.image_url}" class="product-img-thumb">` : '—'}</td>
+            <td>${p.name_lv}${p.sku ? `<div style="font-size:.72rem;color:#8a9ab5;font-family:monospace;margin-top:2px">${p.sku}</div>` : ''}</td>
+            <td>${subLabel}</td>
+            <td>${p.price.toFixed(2)} €</td>
+            <td>${p.in_stock ? '✓' : '✗'}</td>
+            <td>
+              <button class="btn btn-ghost btn-sm" onclick="goEditProduct(${p.id})">✏️ Rediģēt</button>
+              <button class="btn-danger" onclick="deleteCatProduct(${p.id})">Dzēst</button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+
+      const panel = document.getElementById('cat-products-panel');
+      panel.style.display = '';
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function goEditProduct(id) {
+      document.querySelector('.tab-btn[data-tab="products"]').click();
+      setTimeout(() => editProduct(id), 80);
+    }
+
+    document.getElementById('btn-add-cat').addEventListener('click', () => {
+      editingCatId = null;
+      ['cf-id','cf-name-lv','cf-name-ru','cf-name-en'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('cf-parent').value = '';
+      document.getElementById('cf-sort').value = '0';
+      document.getElementById('cf-id').disabled = false;
+      document.getElementById('cat-form-title').textContent = 'Jauna kategorija';
+      document.getElementById('cat-form').classList.add('open');
+    });
+    document.getElementById('btn-cancel-cat').addEventListener('click', () => {
+      document.getElementById('cat-form').classList.remove('open');
+    });
+
+    function editCategory(id) {
+      const c = allCategories.find(x => x.id === id);
+      if (!c) return;
+      editingCatId = id;
+      document.getElementById('cf-id').value = c.id;
+      document.getElementById('cf-id').disabled = true; // id is immutable
+      document.getElementById('cf-parent').value = c.parent_id || '';
+      document.getElementById('cf-name-lv').value = c.name_lv;
+      document.getElementById('cf-name-ru').value = c.name_ru;
+      document.getElementById('cf-name-en').value = c.name_en;
+      document.getElementById('cf-sort').value = c.sort_order || 0;
+      document.getElementById('cat-form-title').textContent = 'Rediģēt kategoriju';
+      document.getElementById('cat-form').classList.add('open');
+      document.getElementById('cat-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('btn-save-cat').addEventListener('click', async () => {
+      const payload = {
+        id:        document.getElementById('cf-id').value.trim(),
+        parent_id: document.getElementById('cf-parent').value || null,
+        name_lv:   document.getElementById('cf-name-lv').value.trim(),
+        name_ru:   document.getElementById('cf-name-ru').value.trim(),
+        name_en:   document.getElementById('cf-name-en').value.trim(),
+        sort_order: parseInt(document.getElementById('cf-sort').value) || 0,
+      };
+      if (!payload.id || !payload.name_lv || !payload.name_ru || !payload.name_en) {
+        alert('Aizpildiet visus laukus!'); return;
+      }
+      const url = editingCatId ? `/api/categories/${editingCatId}` : '/api/categories';
+      const method = editingCatId ? 'PUT' : 'POST';
+      const r = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        alert('Kļūda: ' + (e.error || 'unknown'));
+        return;
+      }
+      document.getElementById('cat-form').classList.remove('open');
+      await loadCategories();
+    });
+
+    async function deleteCategory(id) {
+      if (!confirm(`Dzēst kategoriju "${id}"?`)) return;
+      const r = await fetch(`/api/categories/${id}`, { method:'DELETE' });
+      if (!r.ok) {
+        const e = await r.json().catch(() => ({}));
+        alert('Nevar dzēst: ' + (e.error || 'unknown'));
+        return;
+      }
+      await loadCategories();
+    }
+
     // Init
     (async () => {
-      await loadCategories();
-      await Promise.all([loadProducts(), loadOrders()]);
+      await loadProducts();   // products first so renderCatTable can show product counts
+      await loadCategories(); // also calls renderCatTable
+      await loadOrders();
     })();
   </script>
 </body>

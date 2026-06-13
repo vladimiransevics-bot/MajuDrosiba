@@ -65,11 +65,26 @@
             <strong id="cart-total-val">0.00 €</strong>
           </div>
           <form id="order-form" class="order-form">
-            <input type="text" name="name" class="form-input" required data-i18n-placeholder="cart_name" placeholder="Vārds, Uzvārds">
-            <input type="tel" name="phone" class="form-input" required data-i18n-placeholder="cart_phone" placeholder="Tālrunis">
+            <div class="customer-type-toggle">
+              <input type="radio" name="customer_type" id="ct-individual" value="individual" checked>
+              <label for="ct-individual" data-i18n="cart_individual">Fiziska persona</label>
+              <input type="radio" name="customer_type" id="ct-legal" value="legal">
+              <label for="ct-legal" data-i18n="cart_legal">Juridiska persona</label>
+            </div>
+
+            <div class="b2b-fields" id="b2b-fields">
+              <input type="text" name="company_name" class="form-input required" data-i18n-placeholder="cart_company_name" placeholder="Uzņēmuma nosaukums *">
+              <input type="text" name="reg_nr" class="form-input required" data-i18n-placeholder="cart_reg_nr" placeholder="Reģistrācijas Nr. *">
+              <input type="text" name="vat_nr" class="form-input" data-i18n-placeholder="cart_vat_nr" placeholder="PVN Nr. (neobligāti)">
+              <input type="text" name="legal_address" class="form-input required" data-i18n-placeholder="cart_legal_address" placeholder="Juridiskā adrese *">
+            </div>
+
+            <input type="text" name="name" class="form-input required" required data-i18n-placeholder="cart_name" placeholder="Vārds, Uzvārds *">
+            <input type="tel" name="phone" class="form-input required" required data-i18n-placeholder="cart_phone" placeholder="Tālrunis *">
             <input type="email" name="email" class="form-input" data-i18n-placeholder="cart_email" placeholder="E-pasts (neobligāti)">
             <input type="text" name="address" class="form-input" data-i18n-placeholder="cart_address" placeholder="Adrese">
             <textarea name="notes" class="form-input form-textarea" rows="3" data-i18n-placeholder="cart_notes" placeholder="Piezīmes"></textarea>
+            <small class="form-legend" data-i18n="cart_required_note">obligātie lauki</small>
             <button type="submit" class="btn btn-primary btn-lg" style="width:100%" data-i18n="cart_submit">Apstiprināt pasūtījumu</button>
             <p class="form-msg" id="order-msg"></p>
           </form>
@@ -81,12 +96,17 @@
   <footer class="footer">
     <div class="container footer-inner">
       <span class="footer-logo">MĀJU<strong>DROŠĪBA</strong></span>
+      <nav class="footer-links">
+        <a href="terms.html" data-i18n="footer_terms">Lietošanas noteikumi</a>
+        <a href="privacy.html" data-i18n="footer_privacy">Privātuma politika</a>
+      </nav>
       <span class="footer-copy" data-i18n="footer_copy">&copy; 2025 Māju drošība. Visas tiesības aizsargātas.</span>
     </div>
   </footer>
 
   <script src="js/main.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/price.js"></script>
   <script src="js/cart.js"></script>
 </body>
 </html>

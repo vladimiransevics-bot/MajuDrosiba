@@ -31,7 +31,7 @@ function render() {
   }
 
   sidebar.style.display = '';
-  totalEl.textContent = calcTotal(cart).toFixed(2) + ' €';
+  totalEl.textContent = window.PriceFmt.format(calcTotal(cart));
 
   itemsEl.innerHTML = cart.map((item, idx) => `
     <div class="cart-item">
@@ -40,7 +40,7 @@ function render() {
         <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
         <span class="qty-val">${item.qty}</span>
         <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
-        <span class="cart-item-price">${(item.price * item.qty).toFixed(2)} €</span>
+        <span class="cart-item-price">${window.PriceFmt.format(item.price * item.qty)}</span>
         <button class="remove-btn" onclick="removeItem(${idx})" title="Noņemt">×</button>
       </div>
     </div>`).join('');
@@ -65,8 +65,40 @@ function removeItem(idx) {
   render();
 }
 
+function updateB2BVisibility() {
+  const isLegal = document.querySelector('input[name="customer_type"]:checked').value === 'legal';
+  const b2b = document.getElementById('b2b-fields');
+  b2b.classList.toggle('active', isLegal);
+  ['company_name','reg_nr','legal_address'].forEach(n => {
+    const el = document.querySelector(`[name="${n}"]`);
+    if (el) el.required = isLegal;
+  });
+}
+
+function loadCustomerInfo() {
+  const saved = JSON.parse(localStorage.getItem('customer_info') || '{}');
+  if (saved.customer_type === 'legal') {
+    document.getElementById('ct-legal').checked = true;
+  }
+  ['name','phone','email','address','company_name','reg_nr','vat_nr','legal_address'].forEach(n => {
+    const el = document.querySelector(`[name="${n}"]`);
+    if (el && saved[n]) el.value = saved[n];
+  });
+  updateB2BVisibility();
+}
+
+function saveCustomerInfo(payload) {
+  const { items, total, notes, ...rest } = payload;
+  localStorage.setItem('customer_info', JSON.stringify(rest));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   render();
+  loadCustomerInfo();
+
+  document.querySelectorAll('input[name="customer_type"]').forEach(r => {
+    r.addEventListener('change', updateB2BVisibility);
+  });
 
   document.getElementById('order-form').addEventListener('submit', async e => {
     e.preventDefault();
@@ -74,16 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = getCart();
     if (!cart.length) return;
 
-    const total = calcTotal(cart);
+    const customer_type = form.customer_type.value;
+    const total = window.PriceFmt.display(calcTotal(cart));
     const payload = {
+      customer_type,
       name: form.name.value.trim(),
       phone: form.phone.value.trim(),
       email: form.email.value.trim(),
       address: form.address.value.trim(),
+      company_name: form.company_name.value.trim(),
+      reg_nr: form.reg_nr.value.trim(),
+      vat_nr: form.vat_nr.value.trim(),
+      legal_address: form.legal_address.value.trim(),
       items: cart,
       total,
       notes: form.notes.value.trim()
     };
+
+    if (customer_type === 'legal' && (!payload.company_name || !payload.reg_nr || !payload.legal_address)) {
+      const msg = document.getElementById('order-msg');
+      msg.textContent = t('cart_b2b_required');
+      msg.className = 'form-msg form-msg--err';
+      return;
+    }
 
     const msg = document.getElementById('order-msg');
     const btn = form.querySelector('[type="submit"]');
@@ -96,10 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
+        saveCustomerInfo(payload);
         localStorage.removeItem('cart');
         msg.textContent = t('cart_success');
         msg.className = 'form-msg form-msg--ok';
         form.reset();
+        loadCustomerInfo();
         document.getElementById('cart-items').innerHTML = `<p class="cart-empty-msg">${t('cart_success')}</p>`;
         document.getElementById('cart-sidebar').style.display = 'none';
         updateCartCount();
@@ -115,3 +162,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('langChanged', render);
+document.addEventListener('vatChanged', render);

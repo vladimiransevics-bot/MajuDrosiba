@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCTV Designer — Māju Drošība</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="js/i18n.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07080e;--s1:#0d1118;--s2:#141a24;--s3:#1c2535;--bd:#233047;
+  --ac:#00d4ff;--or:#ff9820;--pu:#b06ef5;--re:#ff4545;--gr:#00e676;
+  --ye:#f5c518;--tx:#d8e6f5;--t2:#7a92b8;--t3:#3e5070;
+}
+body{background:var(--bg);color:var(--tx);font-family:'Rajdhani',sans-serif;
+  display:flex;height:100vh;overflow:hidden;user-select:none}
+
+/* ── TOOLBAR ── */
+#tb{width:58px;background:var(--s1);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;align-items:center;
+  padding:10px 0 12px;gap:2px;flex-shrink:0;z-index:10;overflow-y:auto}
+#tb::-webkit-scrollbar{width:0}
+.logo{font-weight:700;font-size:10px;color:var(--ac);letter-spacing:.2em;
+  text-align:center;line-height:1.3;padding:2px 0 8px}
+.tb-sep{width:34px;height:1px;background:var(--bd);margin:3px 0}
+.tb-btn{width:42px;height:42px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--t2);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  transition:all .15s;position:relative}
+.tb-btn svg{transition:stroke .15s,fill .15s}
+.tb-btn span{font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1;font-weight:600}
+.tb-btn:hover{background:var(--s2);color:var(--tx);border-color:var(--bd)}
+.tb-btn.t-select.active{background:rgba(216,230,245,.08);border-color:var(--tx);color:var(--tx)}
+.tb-btn.t-pan.active{background:rgba(216,230,245,.08);border-color:var(--tx);color:var(--tx)}
+.tb-btn.t-pan.active svg{stroke:var(--tx)}
+.tb-btn.t-dome.active{background:rgba(0,212,255,.12);border-color:var(--ac);color:var(--ac)}
+.tb-btn.t-dome.active svg{stroke:var(--ac)}
+.tb-btn.t-bullet.active{background:rgba(255,152,32,.12);border-color:var(--or);color:var(--or)}
+.tb-btn.t-bullet.active svg{stroke:var(--or)}
+.tb-btn.t-ptz.active{background:rgba(176,110,245,.12);border-color:var(--pu);color:var(--pu)}
+.tb-btn.t-ptz.active svg{stroke:var(--pu)}
+.tb-btn.t-ruler.active{background:rgba(245,197,24,.12);border-color:var(--ye);color:var(--ye)}
+.tb-btn.t-ruler.active svg{stroke:var(--ye)}
+.tb-btn.t-text.active{background:rgba(216,230,245,.1);border-color:var(--tx);color:var(--tx)}
+.tb-btn.t-zone.active{background:rgba(0,230,118,.12);border-color:var(--gr);color:var(--gr)}
+.tb-btn.t-zone.active svg{stroke:var(--gr)}
+.tb-btn.t-calibrate.active{background:rgba(255,110,181,.12);border-color:#ff6eb5;color:#ff6eb5}
+.tb-btn.t-calibrate.active svg{stroke:#ff6eb5}
+.tb-btn.t-snap.on{background:rgba(0,212,255,.1);border-color:var(--ac);color:var(--ac)}
+.tb-btn.t-delete.active{background:rgba(255,69,69,.12);border-color:var(--re);color:var(--re)}
+.tb-btn.t-delete.active svg{stroke:var(--re)}
+.tb-hint{position:absolute;left:52px;top:50%;transform:translateY(-50%);
+  background:var(--s3);border:1px solid var(--bd);padding:4px 10px;border-radius:5px;
+  font-size:11px;font-weight:600;color:var(--tx);white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:100}
+.tb-btn:hover .tb-hint{opacity:1}
+
+/* undo/redo pair */
+.tb-pair{display:flex;gap:3px;margin:1px 0}
+.tb-ud{width:19px;height:28px;border-radius:5px;border:1px solid transparent;
+  background:transparent;color:var(--t3);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:13px}
+.tb-ud:hover:not(:disabled){background:var(--s2);color:var(--tx);border-color:var(--bd)}
+.tb-ud:disabled{opacity:.2;cursor:default}
+
+.tb-keys{margin-top:auto;padding:8px 0 0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.key-row{font-size:7.5px;color:var(--t3);text-align:center;line-height:1.6}
+
+/* ── MAIN ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#topbar{height:42px;background:var(--s1);border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
+.tbar-title{font-weight:700;font-size:12px;letter-spacing:.18em;color:var(--ac);text-transform:uppercase}
+.tbar-sep{width:1px;height:20px;background:var(--bd)}
+.tbar-file{font-size:11px;color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-nav{display:flex;align-items:center;gap:5px}
+.nav-btn{padding:3px 9px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);
+  border-radius:4px;cursor:pointer;font-family:'Rajdhani';font-size:11px;font-weight:700;transition:all .15s}
+.nav-btn:hover:not(:disabled){background:var(--s3);border-color:var(--ac);color:var(--ac)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.page-info{font-family:'JetBrains Mono';font-size:10px;color:var(--t2);width:54px;text-align:center}
+.zoom-wrap{display:flex;align-items:center;gap:4px;margin-left:auto}
+.z-btn{width:22px;height:22px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);
+  border-radius:4px;cursor:pointer;font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.z-btn:hover{background:var(--s3);border-color:var(--ac);color:var(--ac)}
+#zoom-lbl{font-family:'JetBrains Mono';font-size:10px;color:var(--t2);width:40px;text-align:center}
+.fit-btn{padding:3px 8px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);
+  border-radius:4px;cursor:pointer;font-family:'Rajdhani';font-size:10px;font-weight:700;
+  letter-spacing:.05em;transition:all .15s}
+.fit-btn:hover{border-color:var(--ac);color:var(--ac)}
+
+/* ── CANVAS ── */
+#area{flex:1;position:relative;overflow:hidden;background:#040507}
+#grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(35,48,71,.35) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(35,48,71,.35) 1px,transparent 1px);
+  background-size:40px 40px}
+#drop{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;cursor:pointer;z-index:5;transition:background .2s}
+#drop.over{background:rgba(0,212,255,.04)}
+#drop.hidden{display:none}
+.dz-icon{width:68px;height:68px;border:2px dashed var(--bd);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all .2s}
+#drop.over .dz-icon{border-color:var(--ac);color:var(--ac)}
+.dz-h{font-size:15px;font-weight:700;color:var(--t2);letter-spacing:.04em}
+.dz-s{font-size:11px;color:var(--t3)}
+.dz-btn{padding:8px 22px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.35);
+  color:var(--ac);border-radius:6px;cursor:pointer;font-family:'Rajdhani';font-size:12px;
+  font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:all .15s}
+.dz-btn:hover{background:rgba(0,212,255,.14)}
+#main-canvas{position:absolute;top:0;left:0;display:none;cursor:crosshair}
+
+/* ── STATUS ── */
+#statusbar{height:25px;background:var(--s1);border-top:1px solid var(--bd);
+  display:flex;align-items:center;padding:0 12px;gap:16px;
+  font-family:'JetBrains Mono';font-size:9.5px;color:var(--t3);flex-shrink:0}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--gr);display:inline-block;margin-right:5px}
+#sb-coords{margin-left:auto}
+
+/* ── RIGHT PANEL ── */
+#panel{width:224px;background:var(--s1);border-left:1px solid var(--bd);
+  display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ps{padding:10px 12px;border-bottom:1px solid var(--bd)}
+.pt{font-size:8.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:8px}
+#no-sel{padding:22px 14px;text-align:center;color:var(--t3);font-size:11px;line-height:1.8}
+#no-sel svg{display:block;margin:0 auto 10px;opacity:.25}
+#cam-props,#anno-props{display:none}
+.type-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:4px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.prop-lbl{font-size:11px;color:var(--t2);margin-bottom:3px}
+.prop-in{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:4px 8px;
+  border-radius:4px;font-size:12px;font-family:'JetBrains Mono';width:100%;transition:border .15s}
+.prop-in:focus{outline:none;border-color:var(--ac)}
+.sl-wrap{margin-bottom:8px}
+.sl-head{display:flex;justify-content:space-between;margin-bottom:4px}
+.sl-lbl{font-size:10.5px;color:var(--t2)}
+.sl-val{font-family:'JetBrains Mono';font-size:10.5px;color:var(--tx)}
+input[type=range]{width:100%;height:3px;border-radius:2px;appearance:none;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;cursor:pointer}
+input[type=range].ac-r::-webkit-slider-thumb{background:var(--ac)}
+input[type=range].or-r::-webkit-slider-thumb{background:var(--or)}
+input[type=range].pu-r::-webkit-slider-thumb{background:var(--pu)}
+input[type=range].ye-r::-webkit-slider-thumb{background:var(--ye)}
+input[type=range].ac-r{background:linear-gradient(to right,var(--ac) 0%,var(--bd) 0%)}
+input[type=range].or-r{background:linear-gradient(to right,var(--or) 0%,var(--bd) 0%)}
+input[type=range].pu-r{background:linear-gradient(to right,var(--pu) 0%,var(--bd) 0%)}
+input[type=range].ye-r{background:linear-gradient(to right,var(--ye) 0%,var(--bd) 0%)}
+.del-btn{width:100%;margin-top:6px;padding:6px;
+  background:rgba(255,69,69,.07);border:1px solid rgba(255,69,69,.25);color:var(--re);
+  border-radius:5px;cursor:pointer;font-family:'Rajdhani';font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;transition:all .15s}
+.del-btn:hover{background:rgba(255,69,69,.15)}
+.legend{display:flex;flex-direction:column;gap:5px}
+.leg-row{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--t2)}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cl-hd{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px 4px;border-bottom:1px solid var(--bd)}
+.cl-count{font-family:'JetBrains Mono';font-size:10px;color:var(--t3)}
+#cam-list-wrap{flex:1;overflow-y:auto;min-height:0}
+.cl-inner{padding:6px 8px}
+.cl-empty{padding:14px;text-align:center;color:var(--t3);font-size:10.5px}
+.cl-item{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:5px;
+  border:1px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:2px}
+.cl-item:hover{background:var(--s2)}
+.cl-item.sel{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.25)}
+.cl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cl-info{flex:1;min-width:0}
+.cl-name{font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-type{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.cl-del{width:18px;height:18px;border:none;background:transparent;color:var(--t3);cursor:pointer;
+  border-radius:3px;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:all .15s;flex-shrink:0}
+.cl-item:hover .cl-del{opacity:1}
+.cl-del:hover{background:rgba(255,69,69,.2);color:var(--re)}
+.exp-btn{margin:10px 12px 12px;padding:8px;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);color:var(--ac);
+  border-radius:6px;cursor:pointer;font-family:'Rajdhani';font-size:11.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.exp-btn:hover:not(:disabled){background:rgba(0,212,255,.14)}
+.exp-btn:disabled{opacity:.3;cursor:default}
+#ruler-dist{font-family:'JetBrains Mono';font-size:12px;color:var(--tx);
+  padding:4px 8px;background:var(--s2);border:1px solid var(--bd);border-radius:4px;
+  margin-bottom:8px}
+.scale-row{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.scale-val{font-family:'JetBrains Mono';font-size:9.5px;color:var(--tx)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+#file-input{display:none}
+#text-overlay{position:absolute;display:none;z-index:20}
+
+/* ── Site integration ── */
+.tbar-back{display:flex;align-items:center;gap:5px;color:var(--t2);font-size:11px;font-weight:600;
+  letter-spacing:.05em;text-decoration:none;padding:4px 9px;border-radius:5px;
+  border:1px solid transparent;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.tbar-back:hover{color:var(--tx);border-color:var(--bd);background:var(--s2)}
+#send-plan-btn{padding:5px 13px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.38);
+  color:#f5a623;border-radius:5px;cursor:pointer;font-family:'Rajdhani';font-size:11px;
+  font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:5px}
+#send-plan-btn:hover:not(:disabled){background:rgba(245,166,35,.2);border-color:rgba(245,166,35,.7)}
+#send-plan-btn:disabled{opacity:.3;cursor:default}
+/* Send modal */
+#send-modal{position:fixed;inset:0;background:rgba(4,5,7,.9);z-index:300;
+  display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px)}
+#send-modal.open{display:flex}
+#send-box{background:#0d1118;border:1px solid #233047;border-radius:12px;
+  padding:28px 24px;width:100%;max-width:390px;position:relative}
+.sm-x{position:absolute;top:11px;right:13px;background:none;border:none;
+  color:var(--t2);cursor:pointer;font-size:19px;line-height:1;padding:3px 6px;
+  border-radius:3px;transition:color .15s}
+.sm-x:hover{color:var(--tx)}
+.sm-title{font-family:'Rajdhani';font-size:15px;font-weight:700;letter-spacing:.15em;
+  color:var(--ac);margin-bottom:3px;text-transform:uppercase}
+.sm-sub{font-size:11px;color:var(--t2);margin-bottom:18px;line-height:1.6}
+.sm-lbl{font-size:10.5px;color:var(--t2);margin-bottom:4px;margin-top:8px}
+#sm-submit{width:100%;margin-top:12px;padding:10px;
+  background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.5);color:#f5a623;
+  border-radius:5px;cursor:pointer;font-family:'Rajdhani';font-size:12.5px;
+  font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:7px}
+#sm-submit:hover:not(:disabled){background:rgba(245,166,35,.2)}
+#sm-submit:disabled{opacity:.4;cursor:default}
+#sm-success{display:none;text-align:center;padding:16px 0}
+.sm-ok{font-size:40px;color:#00e676;margin-bottom:10px}
+.sm-ok-title{font-family:'Rajdhani';font-size:16px;font-weight:700;color:var(--gr);margin-bottom:6px}
+.sm-ok-sub{font-size:11px;color:var(--t2);line-height:1.7}
+.sm-ok-close{margin-top:16px;padding:6px 20px;background:transparent;
+  border:1px solid var(--bd);color:var(--t2);border-radius:4px;cursor:pointer;
+  font-family:'Rajdhani';font-size:11.5px;font-weight:600;transition:all .15s}
+.sm-ok-close:hover{border-color:var(--tx);color:var(--tx)}
+#text-overlay input{background:rgba(13,17,24,.95);border:1px solid var(--ac);color:var(--tx);
+  padding:4px 8px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:13px;
+  font-weight:600;outline:none;min-width:90px}
+/* Language switcher */
+.lang-sw{display:flex;gap:3px;flex-shrink:0}
+.lang-btn{padding:3px 7px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);
+  border-radius:4px;cursor:pointer;font-family:'Rajdhani';font-size:10px;font-weight:700;
+  letter-spacing:.05em;transition:all .15s}
+.lang-btn:hover{border-color:var(--ac);color:var(--ac)}
+.lang-btn.active{background:rgba(0,212,255,.1);border-color:var(--ac);color:var(--ac)}
+</style>
+</head>
+<body>
+
+<!-- ── TOOLBAR ── -->
+<div id="tb">
+  <div class="logo">CCTV<br>PRO</div>
+  <div class="tb-sep"></div>
+
+  <div class="tb-pair">
+    <button class="tb-ud" id="btn-undo" title="Отменить [Ctrl+Z]" data-i18n-title="cctv_undo" disabled onclick="H.undo()">↩</button>
+    <button class="tb-ud" id="btn-redo" title="Повторить [Ctrl+Y]" data-i18n-title="cctv_redo" disabled onclick="H.redo()">↪</button>
+  </div>
+
+  <div class="tb-sep"></div>
+
+  <button class="tb-btn t-select" id="btn-select" onclick="setTool('select')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 19 12l-7 1-4 7z"/></svg>
+    <span>Select</span>
+    <div class="tb-hint" data-i18n="cctv_hint_select">Выбрать / Переместить [V]</div>
+  </button>
+
+  <button class="tb-btn t-pan" id="btn-pan" onclick="setTool('pan')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 11V4a2 2 0 0 1 4 0v7"/><path d="M5 11V7a2 2 0 0 1 4 0v4"/><path d="M5 14v1a5 5 0 0 0 5 5h2a5 5 0 0 0 5-5v-3H5v3z"/>
+    </svg>
+    <span>Pan</span>
+    <div class="tb-hint" data-i18n="cctv_hint_pan">Прокрутка [H] · Пробел — временно</div>
+  </button>
+
+  <div class="tb-sep"></div>
+
+  <button class="tb-btn t-dome active" id="btn-dome" onclick="setTool('dome')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5" fill="currentColor" fill-opacity=".3"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+    </svg>
+    <span>Dome</span>
+    <div class="tb-hint" data-i18n="cctv_hint_dome">Купольная камера [D]</div>
+  </button>
+
+  <button class="tb-btn t-bullet" id="btn-bullet" onclick="setTool('bullet')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="9" width="12" height="6" rx="3"/><path d="M15 10.5h5.5M15 13.5h5.5"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/>
+    </svg>
+    <span>Bullet</span>
+    <div class="tb-hint" data-i18n="cctv_hint_bullet">Цилиндрическая камера [B]</div>
+  </button>
+
+  <button class="tb-btn t-ptz" id="btn-ptz" onclick="setTool('ptz')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21"/><path d="M6.34 6.34 8.1 8.1M15.9 15.9l1.76 1.76M17.66 6.34 15.9 8.1M8.1 15.9l-1.76 1.76"/>
+    </svg>
+    <span>PTZ</span>
+    <div class="tb-hint" data-i18n="cctv_hint_ptz">Поворотная PTZ камера [P]</div>
+  </button>
+
+  <div class="tb-sep"></div>
+
+  <button class="tb-btn t-ruler" id="btn-ruler" onclick="setTool('ruler')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7h18v10H3z"/><path d="M7 7v4M11 7v2M15 7v4M19 7v2"/>
+    </svg>
+    <span>Ruler</span>
+    <div class="tb-hint" data-i18n="cctv_hint_ruler">Линейка / Измерение [R]</div>
+  </button>
+
+  <button class="tb-btn t-text" id="btn-text" onclick="setTool('text')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+    </svg>
+    <span>Text</span>
+    <div class="tb-hint" data-i18n="cctv_hint_text">Текстовая аннотация [T]</div>
+  </button>
+
+  <button class="tb-btn t-zone" id="btn-zone" onclick="setTool('zone')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>
+    </svg>
+    <span>Zone</span>
+    <div class="tb-hint" data-i18n="cctv_hint_zone">Зона наблюдения [Z]</div>
+  </button>
+
+  <div class="tb-sep"></div>
+
+  <button class="tb-btn t-calibrate" id="btn-calibrate" onclick="setTool('calibrate')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="m4.93 4.93 2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+    </svg>
+    <span>Scale</span>
+    <div class="tb-hint" data-i18n="cctv_hint_scale">Калибровка масштаба [C]</div>
+  </button>
+
+  <button class="tb-btn t-snap" id="btn-snap" onclick="toggleSnap()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3h3M3 3v3M21 3h-3M21 3v3M3 21h3M3 21v-3M21 21h-3M21 21v-3"/>
+      <circle cx="12" cy="12" r="2" fill="currentColor"/>
+    </svg>
+    <span>Snap</span>
+    <div class="tb-hint" data-i18n="cctv_hint_snap">Привязка к сетке [G]</div>
+  </button>
+
+  <div class="tb-sep"></div>
+
+  <button class="tb-btn t-delete" id="btn-delete" onclick="setTool('delete')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M19 6 18 20H6L5 6"/><path d="M9 6V4h6v2M10 11v5M14 11v5"/>
+    </svg>
+    <span>Delete</span>
+    <div class="tb-hint" data-i18n="cctv_hint_delete">Удалить элемент [X]</div>
+  </button>
+
+  <div class="tb-keys">
+    <div class="key-row">Scroll=zoom</div>
+    <div class="key-row">Alt+drag=pan</div>
+    <div class="key-row">←→ rotate</div>
+    <div class="key-row">◈drag=range</div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main">
+  <div id="topbar">
+    <a href="services/video.html" class="tbar-back">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Māju Drošiba
+    </a>
+    <div class="tbar-sep"></div>
+    <span class="tbar-title">CCTV Designer</span>
+    <div class="tbar-sep"></div>
+    <span class="tbar-file" id="tbar-file" data-i18n="cctv_file_none" style="color:var(--t3)">Файл не загружен</span>
+    <div class="tbar-sep"></div>
+    <div class="page-nav">
+      <button class="nav-btn" id="btn-prev" data-i18n="cctv_prev" disabled onclick="changePage(-1)">‹ Пред</button>
+      <span class="page-info" id="page-info">–</span>
+      <button class="nav-btn" id="btn-next" data-i18n="cctv_next" disabled onclick="changePage(1)">След ›</button>
+    </div>
+    <div class="zoom-wrap">
+      <button class="z-btn" onclick="changeZoom(.8)">−</button>
+      <span id="zoom-lbl">100%</span>
+      <button class="z-btn" onclick="changeZoom(1.25)">+</button>
+      <button class="fit-btn" onclick="fitView()">Fit</button>
+    </div>
+    <div class="tbar-sep"></div>
+    <div class="lang-sw">
+      <button class="lang-btn" data-lang="lv">LV</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+    <div class="tbar-sep"></div>
+    <button id="send-plan-btn" disabled onclick="openSendModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2 15 22 11 13 2 9l20-7z"/></svg>
+      <span data-i18n="cctv_send_plan">Отправить план</span>
+    </button>
+  </div>
+
+  <div id="area">
+    <div id="grid"></div>
+    <div id="drop" onclick="document.getElementById('file-input').click()">
+      <div class="dz-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6M12 13v5M9 16l3-3 3 3"/>
+        </svg>
+      </div>
+      <div class="dz-h" data-i18n="cctv_dz_title">Загрузить план здания</div>
+      <div class="dz-s" data-i18n="cctv_dz_sub">Перетащите PDF или нажмите кнопку</div>
+      <button class="dz-btn" data-i18n="cctv_dz_btn" onclick="event.stopPropagation();document.getElementById('file-input').click()">Выбрать PDF</button>
+    </div>
+    <canvas id="main-canvas"></canvas>
+    <div id="text-overlay"><input type="text" id="text-input" data-i18n-placeholder="cctv_text_ph" placeholder="Введите текст…"></div>
+  </div>
+
+  <div id="statusbar">
+    <span><span class="sb-dot"></span><span id="sb-status">Готов к работе</span></span>
+    <span id="sb-cams">Камер: 0</span>
+    <span id="sb-tool">Инструмент: Купол</span>
+    <span id="sb-scale" style="display:none">Масштаб: —</span>
+    <span id="sb-coords" style="margin-left:auto">x:0  y:0</span>
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div id="panel">
+  <div class="ps">
+    <div class="pt" data-i18n="cctv_props">Свойства</div>
+
+    <div id="no-sel">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><circle cx="11" cy="11" r="3.5"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span data-i18n="cctv_no_sel">Выберите элемент или кликните по плану чтобы разместить камеру</span>
+    </div>
+
+    <!-- Camera properties -->
+    <div id="cam-props">
+      <div id="prop-badge" class="type-badge">Dome</div>
+      <div class="prop-lbl" data-i18n="cctv_prop_name">Название</div>
+      <input type="text" class="prop-in" id="prop-name" placeholder="CAM-01" oninput="updateName(this.value)" style="margin-bottom:8px">
+      <div class="prop-lbl" data-i18n="cctv_prop_model">Модель камеры</div>
+      <input type="text" class="prop-in" id="prop-model" placeholder="Hikvision DS-2CD2T47G2" oninput="updateModel(this.value)" style="margin-bottom:8px">
+      <div class="prop-lbl" data-i18n="cctv_prop_color">Цвет камеры</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <input type="color" id="prop-color" oninput="updateCamColor(this.value)"
+          style="width:38px;height:28px;border:1px solid var(--bd);background:var(--s2);border-radius:4px;padding:2px 3px;cursor:pointer;flex-shrink:0">
+        <button onclick="resetCamColor()"
+          style="flex:1;padding:5px 6px;background:var(--s2);border:1px solid var(--bd);color:var(--t2);border-radius:4px;cursor:pointer;font-family:Rajdhani;font-size:10.5px;font-weight:600;letter-spacing:.05em" data-i18n="cctv_color_default">По умолчанию</button>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><span class="sl-lbl" data-i18n="cctv_direction">Направление</span><span class="sl-val"><span id="v-angle">270</span>°</span></div>
+        <input type="range" id="sl-angle" class="ac-r" min="0" max="359" value="270" oninput="updateAngle(+this.value)">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><span class="sl-lbl" data-i18n="cctv_fov">Угол обзора</span><span class="sl-val"><span id="v-fov">110</span>°</span></div>
+        <input type="range" id="sl-fov" class="ac-r" min="15" max="355" value="110" oninput="updateFov(+this.value)">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><span class="sl-lbl" data-i18n="cctv_range">Дальность</span><span class="sl-val"><span id="v-range">80</span><span id="v-range-unit"> пт</span></span></div>
+        <input type="range" id="sl-range" class="ac-r" min="10" max="500" value="80" oninput="updateRange(+this.value)">
+      </div>
+      <button class="del-btn" data-i18n="cctv_del_cam" onclick="deleteSelected()">✕ Удалить камеру</button>
+    </div>
+
+    <!-- Annotation properties -->
+    <div id="anno-props">
+      <div id="anno-badge" class="type-badge">Anno</div>
+
+      <!-- Label fields -->
+      <div id="lbl-fields" style="display:none">
+        <div class="prop-lbl" data-i18n="cctv_text">Текст</div>
+        <input type="text" class="prop-in" id="prop-lbl-text" oninput="updateLabelText(this.value)" style="margin-bottom:8px">
+        <div class="sl-wrap">
+          <div class="sl-head"><span class="sl-lbl" data-i18n="cctv_font_size">Размер шрифта</span><span class="sl-val"><span id="v-lbl-size">8</span> <span data-i18n="cctv_u_pt">пт</span></span></div>
+          <input type="range" id="sl-lbl-size" class="ye-r" min="4" max="32" value="8" oninput="updateLabelSize(+this.value)">
+        </div>
+      </div>
+
+      <!-- Zone fields -->
+      <div id="zone-fields" style="display:none">
+        <div class="prop-lbl" data-i18n="cctv_zone_name">Название зоны</div>
+        <input type="text" class="prop-in" id="prop-zone-label" oninput="updateZoneLabel(this.value)" style="margin-bottom:8px">
+      </div>
+
+      <!-- Ruler fields -->
+      <div id="ruler-fields" style="display:none">
+        <div class="prop-lbl" data-i18n="cctv_length">Длина</div>
+        <div id="ruler-dist">—</div>
+      </div>
+
+      <button class="del-btn" data-i18n="cctv_del" onclick="deleteSelected()">✕ Удалить</button>
+    </div>
+  </div>
+
+  <div class="ps">
+    <div class="pt" data-i18n="cctv_legend">Обозначения</div>
+    <div class="legend">
+      <div class="leg-row"><div class="leg-dot" style="background:var(--ac)"></div><span data-i18n="cctv_leg_dome">Купольная (Dome)</span></div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--or)"></div><span data-i18n="cctv_leg_bullet">Цилиндрическая (Bullet)</span></div>
+      <div class="leg-row"><div class="leg-dot" style="background:var(--pu)"></div><span data-i18n="cctv_leg_ptz">Поворотная (PTZ)</span></div>
+    </div>
+  </div>
+
+  <div class="ps">
+    <div class="pt" data-i18n="cctv_scale_grid">Масштаб и сетка</div>
+    <div class="scale-row" style="margin-bottom:6px">
+      <span class="prop-lbl" style="margin:0" data-i18n="cctv_scale">Масштаб:</span>
+      <span class="scale-val" id="panel-scale" data-i18n="cctv_scale_unset">не задан</span>
+    </div>
+    <button class="fit-btn" id="reset-scale-btn" data-i18n="cctv_scale_reset" style="width:100%;margin-bottom:8px;display:none" onclick="resetScale()">Сбросить масштаб</button>
+    <div class="scale-row">
+      <span style="font-size:11px;color:var(--t2)" data-i18n="cctv_snap_grid">Привязка к сетке [G]</span>
+      <button id="snap-lbl-btn" class="fit-btn" onclick="toggleSnap()" style="font-size:10px">Выкл</button>
+    </div>
+  </div>
+
+  <div class="cl-hd">
+    <div class="pt" style="margin:0" data-i18n="cctv_cam_list">Список камер</div>
+    <span class="cl-count" id="cl-count">0</span>
+  </div>
+  <div id="cam-list-wrap">
+    <div class="cl-inner" id="cam-list">
+      <div class="cl-empty" data-i18n="cctv_no_cams">Камеры не расставлены</div>
+    </div>
+  </div>
+
+  <button class="exp-btn" id="exp-btn" disabled onclick="exportPNG()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+    </svg>
+    <span data-i18n="cctv_export">Экспорт PNG</span>
+  </button>
+</div>
+
+<input type="file" id="file-input" accept=".pdf">
+
+<script>
+// ── PDF.js ──
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── i18n helper (RU fallback until translations load) ──
+const T_FALLBACK = {
+  cctv_type_dome:'Купол', cctv_type_bullet:'Цилинд.', cctv_type_ptz:'PTZ',
+  cctv_tool_select:'Выбор', cctv_tool_pan:'Прокрутка', cctv_tool_ruler:'Линейка',
+  cctv_tool_text:'Текст', cctv_tool_zone:'Зона', cctv_tool_calibrate:'Калибровка',
+  cctv_tool_delete:'Удалить', cctv_sb_tool:'Инструмент:', cctv_sb_cams:'Камер:',
+  cctv_sb_scale:'Масштаб:', cctv_u_pt:'пт', cctv_u_m:'м', cctv_u_cm:'см', cctv_u_mm:'мм',
+  cctv_on:'Вкл', cctv_off:'Выкл', cctv_scale_unset:'не задан',
+  cctv_no_cams:'Камеры не расставлены', cctv_legend:'Обозначения'
+};
+function t(key){
+  const v = window.i18n ? window.i18n(key) : key;
+  return (v === key && T_FALLBACK[key]) ? T_FALLBACK[key] : v;
+}
+function typeLabel(type){ return t('cctv_type_' + type); }
+
+// ── Camera type definitions ──
+const TYPES = {
+  dome:   { labelEn:'Dome',   color:'#00d4ff', fov:110, range:80  },
+  bullet: { labelEn:'Bullet', color:'#ff9820', fov:65,  range:115 },
+  ptz:    { labelEn:'PTZ',    color:'#b06ef5', fov:55,  range:145 }
+};
+
+const ZONE_COLORS = ['#00e676','#00d4ff','#ff9820','#ff4545','#b06ef5'];
+
+// ── State ──
+const S = {
+  pdfDoc:null, page:1, pages:0,
+  pageCache:{},  // n → {canvas, renderScale, naturalW, naturalH}
+  cameras:{}, labels:{}, zones:{}, rulers:{},
+  sel:null, selAnno:null,
+  tool:'dome',
+  scale:1, dx:0, dy:0,
+  dragging:false, dragCam:null, dragOff:{x:0,y:0},
+  draggingLabel:false, dragLbl:null, dragLblOff:{x:0,y:0},
+  panning:false, panStart:null, panOrig:null,
+  rotating:false, rotCam:null,
+  ranging:false, rangeCam:null,
+  fovDragging:false, fovCam:null,
+  rulerDraft:null, zoneDraft:null, calibLine:null,
+  rerendering:false,
+  pixelsPerMeter:null,
+  snap:0,
+  zoneColorIdx:0,
+  nid:1
+};
+
+// ── History ──
+const H = {
+  past:[], future:[],
+  _state() {
+    return JSON.stringify({
+      cameras:S.cameras, labels:S.labels, zones:S.zones, rulers:S.rulers
+    });
+  },
+  snapshot() {
+    this.past.push(this._state());
+    this.future=[];
+    if (this.past.length>50) this.past.shift();
+    updUndoBtns();
+  },
+  undo() {
+    if (!this.past.length) return;
+    this.future.push(this._state());
+    const st = JSON.parse(this.past.pop());
+    S.cameras=st.cameras||{}; S.labels=st.labels||{};
+    S.zones=st.zones||{}; S.rulers=st.rulers||{};
+    S.sel=null; S.selAnno=null;
+    updateUI(); render(); updUndoBtns();
+  },
+  redo() {
+    if (!this.future.length) return;
+    this.past.push(this._state());
+    const st = JSON.parse(this.future.pop());
+    S.cameras=st.cameras||{}; S.labels=st.labels||{};
+    S.zones=st.zones||{}; S.rulers=st.rulers||{};
+    S.sel=null; S.selAnno=null;
+    updateUI(); render(); updUndoBtns();
+  }
+};
+
+function updUndoBtns() {
+  document.getElementById('btn-undo').disabled = !H.past.length;
+  document.getElementById('btn-redo').disabled = !H.future.length;
+}
+
+// ── Page accessors ──
+function cams()     { if (!S.cameras[S.page]) S.cameras[S.page]=[]; return S.cameras[S.page]; }
+function pageLbls() { if (!S.labels[S.page])  S.labels[S.page] =[]; return S.labels[S.page];  }
+function pageZones(){ if (!S.zones[S.page])   S.zones[S.page]  =[]; return S.zones[S.page];   }
+function pageRulers(){ if (!S.rulers[S.page]) S.rulers[S.page] =[]; return S.rulers[S.page];  }
+
+// ── Helpers ──
+const DPR = () => window.devicePixelRatio || 1;
+function toWorld(sx,sy){ return {x:(sx-S.dx)/S.scale, y:(sy-S.dy)/S.scale}; }
+function toScreen(wx,wy){ return {x:wx*S.scale+S.dx, y:wy*S.scale+S.dy}; }
+function rgba(hex,a){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function snapV(v){ return S.snap ? Math.round(v/S.snap)*S.snap : v; }
+function camColor(cam){ return cam.color||TYPES[cam.type].color; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function totalCams(){ return Object.values(S.cameras).flat().length; }
+
+// ── Canvas ──
+const CV = document.getElementById('main-canvas');
+const CX = CV.getContext('2d');
+const AREA = document.getElementById('area');
+
+let _raf = false;
+function scheduleRender(){
+  if (_raf) return; _raf=true;
+  requestAnimationFrame(()=>{ _raf=false; render(); });
+}
+
+function resizeCanvas(){
+  const dpr=DPR();
+  CV.width  = AREA.clientWidth  * dpr;
+  CV.height = AREA.clientHeight * dpr;
+  CV.style.width  = AREA.clientWidth  + 'px';
+  CV.style.height = AREA.clientHeight + 'px';
+  render();
+}
+new ResizeObserver(resizeCanvas).observe(AREA);
+
+// ── PDF loading ──
+document.getElementById('file-input').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(f) await loadPDF(await f.arrayBuffer(), f.name);
+  e.target.value='';
+});
+
+const dropEl = document.getElementById('drop');
+AREA.addEventListener('dragover', e=>{ e.preventDefault(); dropEl.classList.add('over'); });
+AREA.addEventListener('dragleave', ()=>dropEl.classList.remove('over'));
+AREA.addEventListener('drop', async e=>{
+  e.preventDefault(); dropEl.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if (f && f.name.toLowerCase().endsWith('.pdf')) await loadPDF(await f.arrayBuffer(), f.name);
+});
+
+async function loadPDF(ab, name){
+  setStatus(t('cctv_status_loading'));
+  try {
+    S.pdfDoc  = await pdfjsLib.getDocument({data:ab}).promise;
+    S.pages   = S.pdfDoc.numPages;
+    S.page    = 1;
+    S.pageCache={}; S.cameras={}; S.labels={}; S.zones={}; S.rulers={};
+    S.sel=null; S.selAnno=null;
+    S.pixelsPerMeter=null;
+    H.past=[]; H.future=[]; updUndoBtns();
+
+    const tf = document.getElementById('tbar-file');
+    tf.removeAttribute('data-i18n');   // stop i18n from overwriting the filename
+    tf.textContent = name;
+    tf.style.color = 'var(--tx)';
+    document.getElementById('exp-btn').disabled = false;
+    document.getElementById('send-plan-btn').disabled = false;
+
+    await renderPageToCache(1);
+    dropEl.classList.add('hidden');
+    CV.style.display = 'block';
+    updatePageNav(); fitView(); updateUI(); updateScalePanel();
+  } catch(err){ setStatus(t('cctv_status_err')+' '+err.message); console.error(err); }
+}
+
+async function renderPageToCache(n, atScale){
+  const dpr = DPR();
+  const rs = atScale || Math.max(3, dpr * 2);
+  setStatus(`${t('cctv_status_rendering')} ${n}…`);
+  try {
+    const page = await S.pdfDoc.getPage(n);
+    const vp   = page.getViewport({scale:rs});
+    const cv   = document.createElement('canvas');
+    cv.width=vp.width; cv.height=vp.height;
+    await page.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+    S.pageCache[n] = {canvas:cv, renderScale:rs, naturalW:vp.width/rs, naturalH:vp.height/rs};
+    setStatus(t('cctv_status_done'));
+    return S.pageCache[n];
+  } catch(err){ setStatus(t('cctv_status_render_err')); throw err; }
+}
+
+// ── View ──
+function fitView(){
+  const pc=S.pageCache[S.page]; if(!pc) return;
+  const dpr=DPR(), cvW=CV.width/dpr, cvH=CV.height/dpr;
+  const sc = Math.min(cvW/pc.naturalW, cvH/pc.naturalH)*0.92;
+  S.scale=sc;
+  S.dx=(cvW-pc.naturalW*sc)/2;
+  S.dy=(cvH-pc.naturalH*sc)/2;
+  render(); updateZoomLabel();
+}
+
+let _zRaf=null;
+function changeZoom(f){
+  const dpr=DPR(), cx=CV.width/dpr/2, cy=CV.height/dpr/2;
+  const tScale=Math.max(.04,Math.min(14,S.scale*f));
+  const rf=tScale/S.scale;
+  const tDx=cx-(cx-S.dx)*rf, tDy=cy-(cy-S.dy)*rf;
+  if(_zRaf) cancelAnimationFrame(_zRaf);
+  const s0=S.scale, d0x=S.dx, d0y=S.dy;
+  let t=0; const STEPS=12;
+  function step(){
+    t++;
+    const p=1-Math.pow(1-t/STEPS,2);
+    S.scale=s0+(tScale-s0)*p; S.dx=d0x+(tDx-d0x)*p; S.dy=d0y+(tDy-d0y)*p;
+    render(); updateZoomLabel();
+    if(t<STEPS) _zRaf=requestAnimationFrame(step); else _zRaf=null;
+  }
+  _zRaf=requestAnimationFrame(step);
+}
+
+function updateZoomLabel(){
+  document.getElementById('zoom-lbl').textContent = Math.round(S.scale*100)+'%';
+}
+
+async function changePage(d){
+  const n=S.page+d;
+  if(n<1||n>S.pages) return;
+  S.page=n; S.sel=null; S.selAnno=null;
+  S.rulerDraft=null; S.zoneDraft=null; S.calibLine=null;
+  closeTextOverlay();
+  if(!S.pageCache[n]) await renderPageToCache(n);
+  updatePageNav(); fitView(); updateUI();
+}
+
+function updatePageNav(){
+  document.getElementById('page-info').textContent=`${S.page} / ${S.pages}`;
+  document.getElementById('btn-prev').disabled=S.page<=1;
+  document.getElementById('btn-next').disabled=S.page>=S.pages;
+}
+
+// ── Render ──
+function render(){
+  const dpr=DPR();
+  CX.clearRect(0,0,CV.width,CV.height);
+  const pc=S.pageCache[S.page];
+
+  CX.save();
+  CX.scale(dpr,dpr);           // physical → CSS px
+  CX.translate(S.dx,S.dy);
+  CX.scale(S.scale,S.scale);   // CSS px → world (PDF points)
+
+  if(pc){
+    CX.shadowColor='rgba(0,0,0,.85)'; CX.shadowBlur=12/S.scale;
+    CX.drawImage(pc.canvas, 0,0, pc.naturalW, pc.naturalH);
+    CX.shadowBlur=0;
+
+    // Progressive quality upgrade when zoomed in past cache resolution
+    const needed = S.scale*dpr;
+    if(needed > pc.renderScale*0.85 && !S.rerendering){
+      S.rerendering=true;
+      renderPageToCache(S.page, Math.min(needed*1.5, 10))
+        .then(()=>{ S.rerendering=false; scheduleRender(); })
+        .catch(()=>{ S.rerendering=false; });
+    }
+
+    if(S.snap) drawSnapGrid(CX, pc.naturalW, pc.naturalH);
+  }
+
+  for(const z of pageZones())  drawZone(CX,z, S.selAnno?.type==='zone'  && S.selAnno?.id===z.id);
+  if(S.zoneDraft)  drawZone(CX,S.zoneDraft,true);
+  if(S.calibLine)  drawCalibLine(CX,S.calibLine);
+  for(const r of pageRulers()) drawRuler(CX,r, S.selAnno?.type==='ruler' && S.selAnno?.id===r.id);
+  if(S.rulerDraft) drawRuler(CX,S.rulerDraft,true);
+  for(const c of cams())       drawCamera(CX,c, c.id===S.sel);
+  for(const l of pageLbls())   drawLabel(CX,l,  S.selAnno?.type==='label' && S.selAnno?.id===l.id);
+
+  CX.restore();
+}
+
+// ── Draw: snap grid ──
+function drawSnapGrid(cx, W, H){
+  cx.strokeStyle='rgba(35,48,71,.55)'; cx.lineWidth=0.2;
+  for(let x=0;x<=W;x+=S.snap){
+    cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke();
+  }
+  for(let y=0;y<=H;y+=S.snap){
+    cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke();
+  }
+}
+
+// ── Draw: camera ──
+function drawCamera(cx, cam, sel){
+  const t=TYPES[cam.type];
+  const cc=camColor(cam);
+  const ang=cam.angle*Math.PI/180;
+  const hfov=cam.fov*Math.PI/180/2;
+  const R=7;
+
+  cx.save();
+  cx.translate(cam.x, cam.y);
+
+  // FOV cone
+  cx.beginPath();
+  if(cam.fov>=354){
+    cx.arc(0,0,cam.range,0,Math.PI*2);
+  } else {
+    cx.moveTo(0,0);
+    cx.arc(0,0,cam.range,ang-hfov,ang+hfov);
+    cx.closePath();
+  }
+  const g=cx.createRadialGradient(0,0,R,0,0,cam.range);
+  g.addColorStop(0, rgba(cc,sel?.28:.18));
+  g.addColorStop(1, rgba(cc,sel?.06:.03));
+  cx.fillStyle=g; cx.fill();
+  cx.strokeStyle=rgba(cc,sel?.65:.35);
+  cx.lineWidth=sel?.6:.35; cx.stroke();
+
+  // Direction line
+  if(cam.fov<354){
+    cx.beginPath(); cx.moveTo(0,0);
+    cx.lineTo(Math.cos(ang)*10,Math.sin(ang)*10);
+    cx.strokeStyle=rgba(cc,.55); cx.lineWidth=0.5; cx.stroke();
+  }
+
+  // Selection ring
+  if(sel){
+    cx.beginPath(); cx.arc(0,0,R+3,0,Math.PI*2);
+    cx.strokeStyle=rgba(cc,.5); cx.lineWidth=0.5;
+    cx.setLineDash([2,2]); cx.stroke(); cx.setLineDash([]);
+  }
+
+  // Body
+  const bg=cx.createRadialGradient(0,-1.5,.5,0,0,R);
+  bg.addColorStop(0,sel?cc:rgba(cc,.95));
+  bg.addColorStop(1,rgba(cc,.65));
+  cx.beginPath(); cx.arc(0,0,R,0,Math.PI*2);
+  cx.fillStyle=bg; cx.fill();
+  cx.strokeStyle=sel?'rgba(255,255,255,.7)':'rgba(0,0,0,.5)';
+  cx.lineWidth=sel?.9:.5; cx.stroke();
+
+  // Lens
+  cx.beginPath(); cx.arc(0,0,2.75,0,Math.PI*2);
+  cx.fillStyle='rgba(0,0,0,.75)'; cx.fill();
+  cx.beginPath(); cx.arc(-0.6,-0.6,1.1,0,Math.PI*2);
+  cx.fillStyle='rgba(255,255,255,.35)'; cx.fill();
+
+  // Rotation handle
+  if(sel && cam.fov<354){
+    const hd=R+13;
+    const hx=Math.cos(ang)*hd, hy=Math.sin(ang)*hd;
+    cx.beginPath();
+    cx.moveTo(Math.cos(ang)*(R+1),Math.sin(ang)*(R+1));
+    cx.lineTo(hx,hy);
+    cx.strokeStyle=cc; cx.lineWidth=0.9; cx.stroke();
+    cx.beginPath(); cx.arc(hx,hy,2.75,0,Math.PI*2);
+    cx.fillStyle=cc; cx.fill();
+    cx.strokeStyle='rgba(255,255,255,.7)'; cx.lineWidth=0.5; cx.stroke();
+  }
+
+  // FOV edge handles
+  if(sel && cam.fov<354){
+    const fovR=Math.max(R+18,cam.range*0.38);
+    for(const side of [-1,1]){
+      const fx=Math.cos(ang+side*hfov)*fovR;
+      const fy=Math.sin(ang+side*hfov)*fovR;
+      cx.beginPath(); cx.arc(fx,fy,2.5,0,Math.PI*2);
+      cx.fillStyle='#0d1118'; cx.fill();
+      cx.strokeStyle=rgba(cc,.85); cx.lineWidth=0.9; cx.stroke();
+    }
+  }
+
+  // Range handle
+  if(sel){
+    const rhx=Math.cos(ang)*cam.range, rhy=Math.sin(ang)*cam.range;
+    const rs=3.5;
+    cx.beginPath();
+    cx.moveTo(Math.cos(ang)*(R+1),Math.sin(ang)*(R+1));
+    cx.lineTo(rhx,rhy);
+    cx.strokeStyle=rgba(cc,.4); cx.lineWidth=0.5;
+    cx.setLineDash([2,2]); cx.stroke(); cx.setLineDash([]);
+    cx.save(); cx.translate(rhx,rhy); cx.rotate(ang+Math.PI/4);
+    cx.beginPath(); cx.rect(-rs/2,-rs/2,rs,rs);
+    cx.fillStyle='#0d1118'; cx.fill();
+    cx.strokeStyle=cc; cx.lineWidth=1; cx.stroke();
+    cx.restore();
+    cx.beginPath(); cx.arc(rhx,rhy,1,0,Math.PI*2);
+    cx.fillStyle=cc; cx.fill();
+  }
+
+  // Label
+  cx.font='600 4.75px JetBrains Mono';
+  cx.textAlign='center';
+  cx.strokeStyle='rgba(0,0,0,.85)'; cx.lineWidth=1.25;
+  cx.strokeText(cam.label,0,R+8);
+  cx.fillStyle='rgba(220,235,255,.92)';
+  cx.fillText(cam.label,0,R+8);
+
+  if(cam.model){
+    cx.font='400 3.5px JetBrains Mono';
+    cx.strokeStyle='rgba(0,0,0,.7)'; cx.lineWidth=0.8;
+    cx.strokeText(cam.model,0,R+14);
+    cx.fillStyle='rgba(180,200,230,.65)';
+    cx.fillText(cam.model,0,R+14);
+  }
+
+  cx.restore();
+}
+
+// ── Draw: ruler ──
+function drawRuler(cx, r, sel){
+  const len=Math.hypot(r.x2-r.x1,r.y2-r.y1);
+  if(len<2) return;
+  const col=sel?'#ffe066':'#f5c518';
+  const ang=Math.atan2(r.y2-r.y1,r.x2-r.x1);
+  const cosA=(r.x2-r.x1)/len, sinA=(r.y2-r.y1)/len;
+
+  // Line
+  cx.beginPath(); cx.moveTo(r.x1,r.y1); cx.lineTo(r.x2,r.y2);
+  cx.strokeStyle=rgba(col,sel?.9:.65);
+  cx.lineWidth=sel?.6:.4;
+  cx.setLineDash([3,2]); cx.stroke(); cx.setLineDash([]);
+
+  // End caps
+  const cs=3;
+  [[r.x1,r.y1,-sinA],[r.x2,r.y2,-sinA]].forEach(([px,py,_])=>{
+    cx.beginPath();
+    cx.moveTo(px-sinA*cs,py+cosA*cs);
+    cx.lineTo(px+sinA*cs,py-cosA*cs);
+    cx.strokeStyle=col; cx.lineWidth=0.6; cx.stroke();
+  });
+
+  // Distance label
+  const mx=(r.x1+r.x2)/2, my=(r.y1+r.y2)/2;
+  let lbl;
+  if(S.pixelsPerMeter){
+    const m=len/S.pixelsPerMeter;
+    lbl=m<1?(m*100).toFixed(0)+t('cctv_u_cm'):m.toFixed(2)+t('cctv_u_m');
+  } else {
+    lbl=Math.round(len)+t('cctv_u_pt');
+  }
+  const fs=5;
+  cx.font=`700 ${fs}px JetBrains Mono`;
+  cx.textAlign='center'; cx.textBaseline='middle';
+  const tw=cx.measureText(lbl).width;
+  cx.fillStyle='rgba(10,14,22,.85)';
+  cx.fillRect(mx-tw/2-2, my-fs/2-1.5, tw+4, fs+3);
+  cx.fillStyle=col;
+  cx.fillText(lbl,mx,my);
+  cx.textBaseline='alphabetic';
+}
+
+// ── Draw: zone ──
+function drawZone(cx, z, sel){
+  const x=Math.min(z.x1,z.x2), y=Math.min(z.y1,z.y2);
+  const w=Math.abs(z.x2-z.x1), h=Math.abs(z.y2-z.y1);
+  if(w<2||h<2) return;
+  const col=z.color||'#00e676';
+  cx.fillStyle=rgba(col,sel?.2:.1); cx.fillRect(x,y,w,h);
+  cx.strokeStyle=rgba(col,sel?.85:.5); cx.lineWidth=sel?.6:.4;
+  if(sel){cx.setLineDash([3,2]); cx.strokeRect(x,y,w,h); cx.setLineDash([]);}
+  else    cx.strokeRect(x,y,w,h);
+  if(z.label){
+    const fs=5;
+    cx.font=`700 ${fs}px Rajdhani`;
+    cx.textAlign='left'; cx.textBaseline='top';
+    cx.strokeStyle='rgba(0,0,0,.85)'; cx.lineWidth=1.2;
+    cx.strokeText(z.label,x+2,y+2);
+    cx.fillStyle=rgba(col,.9);
+    cx.fillText(z.label,x+2,y+2);
+    cx.textBaseline='alphabetic';
+  }
+}
+
+// ── Draw: label ──
+function drawLabel(cx, lbl, sel){
+  const fs=lbl.fontSize||8;
+  cx.font=`700 ${fs}px Rajdhani`;
+  cx.textAlign='left'; cx.textBaseline='top';
+  if(sel){
+    const tw=cx.measureText(lbl.text).width;
+    cx.strokeStyle=rgba(lbl.color||'#d8e6f5',.45);
+    cx.lineWidth=0.5;
+    cx.setLineDash([2,2]);
+    cx.strokeRect(lbl.x-1,lbl.y-1,tw+2,fs+2);
+    cx.setLineDash([]);
+  }
+  cx.strokeStyle='rgba(0,0,0,.9)'; cx.lineWidth=1.4;
+  cx.strokeText(lbl.text,lbl.x,lbl.y);
+  cx.fillStyle=lbl.color||'rgba(220,235,255,.92)';
+  cx.fillText(lbl.text,lbl.x,lbl.y);
+  cx.textBaseline='alphabetic';
+}
+
+// ── Draw: calibration line ──
+function drawCalibLine(cx, c){
+  cx.beginPath(); cx.moveTo(c.x1,c.y1); cx.lineTo(c.x2,c.y2);
+  cx.strokeStyle='rgba(255,255,0,.75)'; cx.lineWidth=0.6;
+  cx.setLineDash([3,2]); cx.stroke(); cx.setLineDash([]);
+  [[c.x1,c.y1],[c.x2,c.y2]].forEach(([px,py])=>{
+    cx.beginPath(); cx.arc(px,py,2.5,0,Math.PI*2);
+    cx.fillStyle='rgba(255,255,0,.9)'; cx.fill();
+  });
+  const len=Math.hypot(c.x2-c.x1,c.y2-c.y1);
+  if(len>4){
+    const mx=(c.x1+c.x2)/2, my=(c.y1+c.y2)/2;
+    cx.font='700 5px JetBrains Mono';
+    cx.textAlign='center'; cx.textBaseline='middle';
+    const txt=Math.round(len)+t('cctv_u_pt');
+    const tw=cx.measureText(txt).width;
+    cx.fillStyle='rgba(10,14,22,.85)'; cx.fillRect(mx-tw/2-2,my-4.5,tw+4,9);
+    cx.fillStyle='rgba(255,255,0,.9)'; cx.fillText(txt,mx,my);
+    cx.textBaseline='alphabetic';
+  }
+}
+
+// ── Hit testing ──
+function camAt(sx,sy){
+  const cs=cams();
+  for(let i=cs.length-1;i>=0;i--){
+    const c=cs[i]; const s=toScreen(c.x,c.y);
+    if(Math.hypot(sx-s.x,sy-s.y)<=14) return c;
+  }
+  return null;
+}
+function rotHandleAt(sx,sy){
+  if(!S.sel) return null;
+  const cam=cams().find(c=>c.id===S.sel);
+  if(!cam||cam.fov>=354) return null;
+  const ang=cam.angle*Math.PI/180;
+  const hd=7+13; // R + rot handle offset in world units
+  const ws=toScreen(cam.x+Math.cos(ang)*hd, cam.y+Math.sin(ang)*hd);
+  return Math.hypot(sx-ws.x,sy-ws.y)<=11?cam:null;
+}
+function rangeHandleAt(sx,sy){
+  if(!S.sel) return null;
+  const cam=cams().find(c=>c.id===S.sel);
+  if(!cam) return null;
+  const ang=cam.angle*Math.PI/180;
+  const ws=toScreen(cam.x+Math.cos(ang)*cam.range, cam.y+Math.sin(ang)*cam.range);
+  return Math.hypot(sx-ws.x,sy-ws.y)<=13?cam:null;
+}
+function fovHandleAt(sx,sy){
+  if(!S.sel) return null;
+  const cam=cams().find(c=>c.id===S.sel);
+  if(!cam||cam.fov>=354) return null;
+  const ang=cam.angle*Math.PI/180;
+  const hfov=cam.fov*Math.PI/180/2;
+  const fovR=Math.max(7+18,cam.range*0.38);
+  for(const side of [-1,1]){
+    const ws=toScreen(cam.x+Math.cos(ang+side*hfov)*fovR, cam.y+Math.sin(ang+side*hfov)*fovR);
+    if(Math.hypot(sx-ws.x,sy-ws.y)<=11) return cam;
+  }
+  return null;
+}
+function labelAt(sx,sy){
+  const ls=pageLbls();
+  for(let i=ls.length-1;i>=0;i--){
+    const l=ls[i]; const s=toScreen(l.x,l.y);
+    if(Math.hypot(sx-s.x,sy-s.y)<=22) return l;
+  }
+  return null;
+}
+function zoneAt(sx,sy){
+  const w=toWorld(sx,sy); const zs=pageZones();
+  for(let i=zs.length-1;i>=0;i--){
+    const z=zs[i];
+    const x1=Math.min(z.x1,z.x2), x2=Math.max(z.x1,z.x2);
+    const y1=Math.min(z.y1,z.y2), y2=Math.max(z.y1,z.y2);
+    if(w.x>=x1&&w.x<=x2&&w.y>=y1&&w.y<=y2) return z;
+  }
+  return null;
+}
+function rulerAt(sx,sy){
+  const rs=pageRulers(); const thr=9;
+  for(let i=rs.length-1;i>=0;i--){
+    const r=rs[i];
+    const s1=toScreen(r.x1,r.y1), s2=toScreen(r.x2,r.y2);
+    const dx=s2.x-s1.x, dy=s2.y-s1.y, len2=dx*dx+dy*dy;
+    if(len2<1) continue;
+    const t=Math.max(0,Math.min(1,((sx-s1.x)*dx+(sy-s1.y)*dy)/len2));
+    const px=s1.x+t*dx, py=s1.y+t*dy;
+    if(Math.hypot(sx-px,sy-py)<=thr) return r;
+  }
+  return null;
+}
+
+// ── Camera management ──
+function placeCamera(wx,wy,type){
+  H.snapshot();
+  const t=TYPES[type]; const all=Object.values(S.cameras).flat().length;
+  const cam={
+    id:S.nid++, type, x:wx, y:wy,
+    angle:270, fov:t.fov, range:t.range,
+    label:`CAM-${String(all+1).padStart(2,'0')}`,
+    model:'', color:''
+  };
+  cams().push(cam);
+  selectCam(cam.id);
+  render(); updateUI();
+}
+function deleteCam(id){
+  H.snapshot();
+  S.cameras[S.page]=cams().filter(c=>c.id!==id);
+  if(S.sel===id){ S.sel=null; updatePanel(); }
+  render(); updateUI();
+}
+function selectCam(id){
+  S.sel=id; S.selAnno=null;
+  _rotAccum=0;
+  updatePanel(); updateCamList(); render();
+}
+
+// ── Annotation management ──
+function deleteSelected(){
+  if(S.sel){ deleteCam(S.sel); return; }
+  if(!S.selAnno) return;
+  H.snapshot();
+  const {type,id}=S.selAnno;
+  if(type==='label') S.labels[S.page]=pageLbls().filter(l=>l.id!==id);
+  else if(type==='zone') S.zones[S.page]=pageZones().filter(z=>z.id!==id);
+  else if(type==='ruler') S.rulers[S.page]=pageRulers().filter(r=>r.id!==id);
+  S.selAnno=null;
+  render(); updateUI();
+}
+function selectAnno(type,id){
+  S.sel=null; S.selAnno={type,id};
+  updatePanel(); updateCamList(); render();
+}
+
+// ── Tools ──
+const CURSORS={select:'default',pan:'grab',dome:'crosshair',bullet:'crosshair',ptz:'crosshair',
+  ruler:'crosshair',text:'crosshair',zone:'crosshair',calibrate:'crosshair',delete:'not-allowed'};
+
+function toolLabel(tool){
+  return TYPES[tool] ? typeLabel(tool) : t('cctv_tool_' + tool);
+}
+
+function setTool(tool){
+  S.tool=tool;
+  document.querySelectorAll('.tb-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('btn-'+tool);
+  if(btn) btn.classList.add('active');
+  CV.style.cursor=CURSORS[tool]||'crosshair';
+  document.getElementById('sb-tool').textContent=t('cctv_sb_tool')+' '+toolLabel(tool);
+}
+
+function toggleSnap(){
+  S.snap = S.snap ? 0 : 10;
+  const on = !!S.snap;
+  document.getElementById('btn-snap').classList.toggle('on', on);
+  document.getElementById('snap-lbl-btn').textContent = on ? t('cctv_on') : t('cctv_off');
+  document.getElementById('snap-lbl-btn').style.color = on ? 'var(--ac)' : '';
+  document.getElementById('snap-lbl-btn').style.borderColor = on ? 'var(--ac)' : '';
+  render();
+}
+
+function resetScale(){
+  S.pixelsPerMeter=null; updateScalePanel(); render();
+}
+function updateScalePanel(){
+  const lbl=document.getElementById('panel-scale');
+  const rb=document.getElementById('reset-scale-btn');
+  const sb=document.getElementById('sb-scale');
+  if(S.pixelsPerMeter){
+    const mm=(1/S.pixelsPerMeter*1000).toFixed(1);
+    lbl.removeAttribute('data-i18n');
+    lbl.textContent=`1${t('cctv_u_pt')} ≈ ${mm}${t('cctv_u_mm')}`;
+    rb.style.display=''; sb.style.display='';
+    sb.textContent=`${t('cctv_sb_scale')} 1${t('cctv_u_pt')}≈${mm}${t('cctv_u_mm')}`;
+  } else {
+    lbl.setAttribute('data-i18n','cctv_scale_unset');
+    lbl.textContent=t('cctv_scale_unset');
+    rb.style.display='none'; sb.style.display='none';
+  }
+}
+
+// ── Text overlay ──
+let textCommit=null;
+const textOvl=document.getElementById('text-overlay');
+const textInp=document.getElementById('text-input');
+
+function openTextOverlay(sx,sy,wx,wy,existingLbl){
+  // Position overlay
+  textOvl.style.left=sx+'px'; textOvl.style.top=sy+'px';
+  textOvl.style.display='block';
+  textInp.value=existingLbl?existingLbl.text:'';
+  textInp.dataset.wx=wx; textInp.dataset.wy=wy;
+  textInp.dataset.lid=existingLbl?existingLbl.id:'';
+  textInp.focus(); textInp.select();
+}
+function closeTextOverlay(){
+  textOvl.style.display='none'; textInp.value='';
+}
+textInp.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ e.preventDefault(); commitText(); }
+  if(e.key==='Escape'){ e.preventDefault(); closeTextOverlay(); }
+});
+textInp.addEventListener('blur',()=>{ setTimeout(commitText,80); });
+function commitText(){
+  if(textOvl.style.display==='none') return;
+  const text=textInp.value.trim();
+  const lid=textInp.dataset.lid;
+  closeTextOverlay();
+  if(!text) return;
+  H.snapshot();
+  if(lid){
+    const lbl=pageLbls().find(l=>l.id===+lid);
+    if(lbl){ lbl.text=text; S.selAnno={type:'label',id:+lid}; }
+  } else {
+    const wx=+textInp.dataset.wx, wy=+textInp.dataset.wy;
+    const lbl={id:S.nid++,x:wx,y:wy,text,fontSize:8,color:'rgba(220,235,255,.92)'};
+    pageLbls().push(lbl);
+    S.selAnno={type:'label',id:lbl.id};
+  }
+  render(); updateUI();
+}
+
+// ── Calibration ──
+function openCalibDialog(lineLen){
+  const val=prompt(`${t('cctv_calib_len')} ${Math.round(lineLen)} ${t('cctv_u_pt')}\n${t('cctv_calib_enter')}`);
+  S.calibLine=null;
+  if(val&&!isNaN(parseFloat(val))&&parseFloat(val)>0){
+    S.pixelsPerMeter=lineLen/parseFloat(val);
+    updateScalePanel(); render(); updatePanel();
+  }
+}
+
+// ── Keyboard ──
+let _spacePanPrev = null;
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){ e.preventDefault(); H.undo(); return; }
+  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){ e.preventDefault(); H.redo(); return; }
+  const k=e.key;
+  // Space — temporary pan (hold to pan, release to restore)
+  if(k===' '&&!e.repeat&&S.tool!=='pan'&&!_spacePanPrev){
+    e.preventDefault(); _spacePanPrev=S.tool; setTool('pan'); return;
+  }
+  if(k==='v'||k==='V') setTool('select');
+  if(k==='h'||k==='H') setTool('pan');
+  if(k==='d'||k==='D') setTool('dome');
+  if(k==='b'||k==='B') setTool('bullet');
+  if(k==='p'||k==='P') setTool('ptz');
+  if(k==='r'||k==='R') setTool('ruler');
+  if(k==='t'||k==='T') setTool('text');
+  if((k==='z'||k==='Z')&&!e.ctrlKey&&!e.metaKey) setTool('zone');
+  if(k==='c'||k==='C') setTool('calibrate');
+  if(k==='g'||k==='G') toggleSnap();
+  if(k==='x'||k==='X') setTool('delete');
+  if(k==='Escape'){
+    S.sel=null; S.selAnno=null; S.rulerDraft=null; S.zoneDraft=null; S.calibLine=null;
+    closeTextOverlay(); updatePanel(); updateCamList(); render();
+  }
+  if((k==='Delete'||k==='Backspace')&&(S.sel||S.selAnno)){ e.preventDefault(); deleteSelected(); }
+  if(S.sel&&(k==='ArrowLeft'||k==='ArrowRight')){
+    const cam=cams().find(c=>c.id===S.sel);
+    if(cam){ H.snapshot(); cam.angle=(cam.angle+(k==='ArrowRight'?5:-5)+360)%360; render(); updatePanel(); }
+  }
+});
+document.addEventListener('keyup',e=>{
+  if(e.key===' '&&_spacePanPrev){
+    setTool(_spacePanPrev); _spacePanPrev=null;
+  }
+});
+
+// ── Mouse ──
+CV.addEventListener('mousedown',e=>{
+  if(!S.pdfDoc) return;
+  const x=e.offsetX, y=e.offsetY;
+
+  if(e.button===1||(e.button===0&&(e.altKey||S.tool==='pan'))){
+    S.panning=true; S.panStart={x,y}; S.panOrig={dx:S.dx,dy:S.dy};
+    CV.style.cursor='grabbing'; return;
+  }
+
+  if(e.button===2){
+    const cam=camAt(x,y); if(cam){ deleteCam(cam.id); return; }
+    const lbl=labelAt(x,y);
+    if(lbl){ H.snapshot(); S.labels[S.page]=pageLbls().filter(l=>l.id!==lbl.id); S.selAnno=null; render(); updateUI(); return; }
+    return;
+  }
+
+  if(e.button!==0) return;
+  if(textOvl.style.display==='block'){ textInp.blur(); return; }
+
+  const tool=S.tool;
+
+  if(tool==='delete'){
+    const cam=camAt(x,y); if(cam){ deleteCam(cam.id); return; }
+    const lbl=labelAt(x,y);
+    if(lbl){ H.snapshot(); S.labels[S.page]=pageLbls().filter(l=>l.id!==lbl.id); S.selAnno=null; render(); updateUI(); return; }
+    const zone=zoneAt(x,y);
+    if(zone){ H.snapshot(); S.zones[S.page]=pageZones().filter(z=>z.id!==zone.id); S.selAnno=null; render(); updateUI(); return; }
+    const ruler=rulerAt(x,y);
+    if(ruler){ H.snapshot(); S.rulers[S.page]=pageRulers().filter(r=>r.id!==ruler.id); S.selAnno=null; render(); updateUI(); return; }
+    return;
+  }
+
+  if(tool==='ruler'){ if(S.pageCache[S.page]){ const w=toWorld(x,y); S.rulerDraft={x1:w.x,y1:w.y,x2:w.x,y2:w.y}; } return; }
+  if(tool==='zone'){  if(S.pageCache[S.page]){ const w=toWorld(x,y); S.zoneDraft={x1:snapV(w.x),y1:snapV(w.y),x2:snapV(w.x),y2:snapV(w.y),color:ZONE_COLORS[S.zoneColorIdx%ZONE_COLORS.length]}; } return; }
+  if(tool==='calibrate'){ if(S.pageCache[S.page]){ const w=toWorld(x,y); S.calibLine={x1:w.x,y1:w.y,x2:w.x,y2:w.y}; } return; }
+
+  if(tool==='text'){
+    if(!S.pageCache[S.page]) return;
+    const lbl=labelAt(x,y);
+    if(lbl){
+      selectAnno('label',lbl.id);
+      H.snapshot(); S.draggingLabel=true; S.dragLbl=lbl;
+      const w=toWorld(x,y); S.dragLblOff={x:w.x-lbl.x,y:w.y-lbl.y};
+      return;
+    }
+    const w=toWorld(x,y); openTextOverlay(x,y,w.x,w.y,null);
+    return;
+  }
+
+  // select / dome / bullet / ptz
+  const rang=rangeHandleAt(x,y);
+  if(rang){ H.snapshot(); S.ranging=true; S.rangeCam=rang; CV.style.cursor='ns-resize'; return; }
+  const fovH=fovHandleAt(x,y);
+  if(fovH){ H.snapshot(); S.fovDragging=true; S.fovCam=fovH; CV.style.cursor='col-resize'; return; }
+  const rot=rotHandleAt(x,y);
+  if(rot){ H.snapshot(); S.rotating=true; S.rotCam=rot; CV.style.cursor='grabbing'; return; }
+
+  const cam=camAt(x,y);
+  if(cam){
+    selectCam(cam.id);
+    H.snapshot(); S.dragging=true; S.dragCam=cam;
+    const w=toWorld(x,y); S.dragOff={x:w.x-cam.x,y:w.y-cam.y};
+    CV.style.cursor='grabbing'; return;
+  }
+
+  const lbl2=labelAt(x,y);
+  if(lbl2){
+    selectAnno('label',lbl2.id);
+    H.snapshot(); S.draggingLabel=true; S.dragLbl=lbl2;
+    const w=toWorld(x,y); S.dragLblOff={x:w.x-lbl2.x,y:w.y-lbl2.y};
+    return;
+  }
+  const zone2=zoneAt(x,y);
+  if(zone2){ selectAnno('zone',zone2.id); return; }
+  const ruler2=rulerAt(x,y);
+  if(ruler2){ selectAnno('ruler',ruler2.id); return; }
+
+  if(tool!=='select'&&S.pageCache[S.page]){
+    const w=toWorld(x,y); placeCamera(snapV(w.x),snapV(w.y),tool);
+  } else {
+    S.sel=null; S.selAnno=null; updatePanel(); updateCamList(); render();
+  }
+});
+
+CV.addEventListener('contextmenu',e=>e.preventDefault());
+
+CV.addEventListener('mousemove',e=>{
+  const x=e.offsetX, y=e.offsetY;
+  const w=toWorld(x,y);
+  document.getElementById('sb-coords').textContent=`x:${Math.round(w.x)}  y:${Math.round(w.y)}`;
+
+  if(S.panning){ S.dx=S.panOrig.dx+(x-S.panStart.x); S.dy=S.panOrig.dy+(y-S.panStart.y); scheduleRender(); return; }
+  if(S.dragging&&S.dragCam){ const w2=toWorld(x,y); S.dragCam.x=snapV(w2.x-S.dragOff.x); S.dragCam.y=snapV(w2.y-S.dragOff.y); scheduleRender(); return; }
+  if(S.rotating&&S.rotCam){ const w2=toWorld(x,y); S.rotCam.angle=((Math.atan2(w2.y-S.rotCam.y,w2.x-S.rotCam.x)*180/Math.PI)+360)%360; scheduleRender(); updatePanel(); return; }
+  if(S.ranging&&S.rangeCam){ const w2=toWorld(x,y); const d=Math.hypot(w2.x-S.rangeCam.x,w2.y-S.rangeCam.y); S.rangeCam.range=Math.max(10,Math.min(500,Math.round(d))); scheduleRender(); updatePanel(); return; }
+  if(S.fovDragging&&S.fovCam){ const w2=toWorld(x,y); const ang=S.fovCam.angle*Math.PI/180; let da=Math.atan2(w2.y-S.fovCam.y,w2.x-S.fovCam.x); while(da<ang-Math.PI)da+=2*Math.PI; while(da>ang+Math.PI)da-=2*Math.PI; S.fovCam.fov=Math.max(15,Math.min(355,Math.round(Math.abs(da-ang)*2*180/Math.PI))); scheduleRender(); updatePanel(); return; }
+  if(S.draggingLabel&&S.dragLbl){ const w2=toWorld(x,y); S.dragLbl.x=w2.x-S.dragLblOff.x; S.dragLbl.y=w2.y-S.dragLblOff.y; scheduleRender(); return; }
+  if(S.rulerDraft){ const w2=toWorld(x,y); S.rulerDraft.x2=w2.x; S.rulerDraft.y2=w2.y; scheduleRender(); return; }
+  if(S.zoneDraft){ const w2=toWorld(x,y); S.zoneDraft.x2=snapV(w2.x); S.zoneDraft.y2=snapV(w2.y); scheduleRender(); return; }
+  if(S.calibLine){ const w2=toWorld(x,y); S.calibLine.x2=w2.x; S.calibLine.y2=w2.y; scheduleRender(); return; }
+
+  if(S.pdfDoc){
+    const rang=rangeHandleAt(x,y), fovH=fovHandleAt(x,y), rot=rotHandleAt(x,y), cam=camAt(x,y);
+    const lbl=!cam&&labelAt(x,y);
+    if(rang) CV.style.cursor='ns-resize';
+    else if(fovH) CV.style.cursor='col-resize';
+    else if(rot) CV.style.cursor='grab';
+    else if(cam) CV.style.cursor=S.tool==='delete'?'not-allowed':'move';
+    else if(lbl&&(S.tool==='select'||S.tool==='text')) CV.style.cursor='move';
+    else CV.style.cursor=CURSORS[S.tool]||'crosshair';
+  }
+});
+
+CV.addEventListener('mouseup',e=>{
+  S.panning=false; S.dragging=false; S.rotating=false; S.ranging=false; S.draggingLabel=false; S.fovDragging=false;
+  S.dragCam=null; S.rotCam=null; S.rangeCam=null; S.panStart=null; S.dragLbl=null; S.fovCam=null;
+
+  if(S.rulerDraft){
+    const r=S.rulerDraft; S.rulerDraft=null;
+    const len=Math.hypot(r.x2-r.x1,r.y2-r.y1);
+    if(len>5){ H.snapshot(); pageRulers().push({id:S.nid++,...r}); render(); updateUI(); }
+    else render();
+    return;
+  }
+  if(S.zoneDraft){
+    const z=S.zoneDraft; S.zoneDraft=null;
+    const w=Math.abs(z.x2-z.x1), h=Math.abs(z.y2-z.y1);
+    if(w>5&&h>5){ H.snapshot(); pageZones().push({id:S.nid++,...z,label:''}); S.zoneColorIdx++; render(); updateUI(); }
+    else render();
+    return;
+  }
+  if(S.calibLine){
+    const c=S.calibLine;
+    const len=Math.hypot(c.x2-c.x1,c.y2-c.y1);
+    if(len>5) openCalibDialog(len);
+    else { S.calibLine=null; render(); }
+    return;
+  }
+
+  if(S.pdfDoc) CV.style.cursor=CURSORS[S.tool]||'crosshair';
+});
+
+let _rotAccum=0;
+CV.addEventListener('wheel',e=>{
+  e.preventDefault();
+  if(S.sel&&!e.ctrlKey){
+    const cam=cams().find(c=>c.id===S.sel);
+    if(cam){
+      let nDy=e.deltaY;
+      if(e.deltaMode===1) nDy*=30;
+      if(e.deltaMode===2) nDy*=500;
+      _rotAccum+=nDy;
+      while(Math.abs(_rotAccum)>=100){
+        cam.angle=((cam.angle+(_rotAccum>0?5:-5))+360)%360;
+        _rotAccum-=Math.sign(_rotAccum)*100;
+      }
+      scheduleRender(); updatePanel(); return;
+    }
+  }
+  let dy=e.deltaY;
+  if(e.deltaMode===1) dy*=20;
+  if(e.deltaMode===2) dy*=200;
+  dy=Math.sign(dy)*Math.min(Math.abs(dy),120);
+  const f=Math.pow(0.999,dy);
+  S.dx=e.offsetX-(e.offsetX-S.dx)*f;
+  S.dy=e.offsetY-(e.offsetY-S.dy)*f;
+  S.scale=Math.max(.04,Math.min(14,S.scale*f));
+  scheduleRender(); updateZoomLabel();
+},{passive:false});
+
+// ── UI updates ──
+function updateUI(){ updatePanel(); updateCamList(); updateStatus(); }
+
+function updatePanel(){
+  const noSel=document.getElementById('no-sel');
+  const camP=document.getElementById('cam-props');
+  const annoP=document.getElementById('anno-props');
+
+  if(S.sel){
+    const cam=cams().find(c=>c.id===S.sel);
+    if(!cam){ S.sel=null; updatePanel(); return; }
+    noSel.style.display='none'; camP.style.display=''; annoP.style.display='none';
+
+    const cc=camColor(cam);
+    const badge=document.getElementById('prop-badge');
+    const tl=typeLabel(cam.type), te=TYPES[cam.type].labelEn;
+    badge.textContent=tl===te?tl:tl+' — '+te;
+    badge.style.cssText=`background:${rgba(cc,.14)};color:${cc};border:1px solid ${rgba(cc,.35)}`;
+
+    ['sl-angle','sl-fov','sl-range'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.className=cam.type==='dome'?'ac-r':cam.type==='bullet'?'or-r':'pu-r';
+    });
+    document.getElementById('prop-name').value=cam.label;
+    document.getElementById('prop-model').value=cam.model||'';
+    document.getElementById('prop-color').value=cc;
+    setSlider('sl-angle','v-angle',cam.angle,0,359,cc);
+    setSlider('sl-fov','v-fov',cam.fov,15,355,cc);
+
+    // Range: show in meters if calibrated
+    const rangeVal=cam.range;
+    const rangeDisp=S.pixelsPerMeter
+      ? (rangeVal/S.pixelsPerMeter).toFixed(1)
+      : Math.round(rangeVal);
+    document.getElementById('v-range-unit').textContent=' '+(S.pixelsPerMeter?t('cctv_u_m'):t('cctv_u_pt'));
+    setSlider('sl-range','v-range',rangeVal,10,500,cc);
+    document.getElementById('v-range').textContent=rangeDisp;
+
+  } else if(S.selAnno){
+    noSel.style.display='none'; camP.style.display='none'; annoP.style.display='';
+    document.getElementById('lbl-fields').style.display='none';
+    document.getElementById('zone-fields').style.display='none';
+    document.getElementById('ruler-fields').style.display='none';
+    const badge=document.getElementById('anno-badge');
+    const {type,id}=S.selAnno;
+
+    if(type==='label'){
+      const lbl=pageLbls().find(l=>l.id===id);
+      if(!lbl){ S.selAnno=null; updatePanel(); return; }
+      badge.textContent=t('cctv_badge_anno');
+      badge.style.cssText='background:rgba(216,230,245,.08);color:var(--tx);border:1px solid var(--bd)';
+      document.getElementById('lbl-fields').style.display='';
+      document.getElementById('prop-lbl-text').value=lbl.text;
+      setSlider('sl-lbl-size','v-lbl-size',lbl.fontSize||8,4,32,'#f5c518');
+    } else if(type==='zone'){
+      const zone=pageZones().find(z=>z.id===id);
+      if(!zone){ S.selAnno=null; updatePanel(); return; }
+      badge.textContent=t('cctv_badge_zone');
+      badge.style.cssText=`background:${rgba(zone.color,.14)};color:${zone.color};border:1px solid ${rgba(zone.color,.35)}`;
+      document.getElementById('zone-fields').style.display='';
+      document.getElementById('prop-zone-label').value=zone.label||'';
+    } else if(type==='ruler'){
+      const ruler=pageRulers().find(r=>r.id===id);
+      if(!ruler){ S.selAnno=null; updatePanel(); return; }
+      badge.textContent=t('cctv_badge_ruler');
+      badge.style.cssText='background:rgba(245,197,24,.1);color:#f5c518;border:1px solid rgba(245,197,24,.35)';
+      document.getElementById('ruler-fields').style.display='';
+      const len=Math.hypot(ruler.x2-ruler.x1,ruler.y2-ruler.y1);
+      let dist;
+      if(S.pixelsPerMeter){ const m=len/S.pixelsPerMeter; dist=m<1?(m*100).toFixed(1)+t('cctv_u_cm'):m.toFixed(2)+t('cctv_u_m'); }
+      else dist=Math.round(len)+' '+t('cctv_u_pt');
+      document.getElementById('ruler-dist').textContent=dist;
+    }
+  } else {
+    noSel.style.display=''; camP.style.display='none'; annoP.style.display='none';
+  }
+}
+
+function setSlider(sid,vid,val,min,max,color){
+  const sl=document.getElementById(sid);
+  sl.min=min; sl.max=max; sl.value=val;
+  const pct=(val-min)/(max-min)*100;
+  sl.style.background=`linear-gradient(to right,${color} ${pct}%,var(--bd) ${pct}%)`;
+  document.getElementById(vid).textContent=Math.round(val);
+}
+
+function updateCamList(){
+  const cs=cams();
+  document.getElementById('cl-count').textContent=cs.length;
+  const list=document.getElementById('cam-list');
+  if(!cs.length){ list.innerHTML='<div class="cl-empty">'+esc(t('cctv_no_cams'))+'</div>'; return; }
+
+  list.innerHTML='';
+  cs.forEach(cam=>{
+    const item=document.createElement('div');
+    item.className='cl-item'+(cam.id===S.sel?' sel':'');
+    item.onclick=()=>selectCam(cam.id);
+
+    const dot=document.createElement('div');
+    dot.className='cl-dot';
+    dot.style.cssText=`background:${camColor(cam)};cursor:pointer;outline:2px solid transparent;transition:outline .1s`;
+    dot.title=t('cctv_change_color');
+    dot.onmouseenter=()=>{ dot.style.outline='2px solid rgba(255,255,255,.4)'; };
+    dot.onmouseleave=()=>{ dot.style.outline='2px solid transparent'; };
+    dot.onclick=ev=>{
+      ev.stopPropagation();
+      const pk=document.createElement('input'); pk.type='color'; pk.value=camColor(cam);
+      pk.style.cssText='position:fixed;opacity:0;width:0;height:0;pointer-events:none';
+      document.body.appendChild(pk);
+      pk.addEventListener('input',()=>{ cam.color=pk.value; dot.style.background=pk.value; render(); });
+      pk.addEventListener('change',()=>{
+        H.snapshot(); cam.color=pk.value; dot.style.background=pk.value;
+        render(); updatePanel(); document.body.removeChild(pk);
+      });
+      pk.click();
+    };
+
+    const info=document.createElement('div');
+    info.className='cl-info';
+
+    const name=document.createElement('div');
+    name.className='cl-name'; name.textContent=cam.label;
+
+    const rangeDisp=S.pixelsPerMeter
+      ?(cam.range/S.pixelsPerMeter).toFixed(1)+t('cctv_u_m')
+      :Math.round(cam.range)+t('cctv_u_pt');
+    const sub=document.createElement('div');
+    sub.className='cl-type';
+    if(cam.model){
+      const mSpan=document.createElement('span');
+      mSpan.textContent=cam.model+' · ';
+      mSpan.style.cssText='cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px';
+      mSpan.title=t('cctv_click_model');
+      mSpan.onclick=ev=>{
+        ev.stopPropagation(); selectCam(cam.id);
+        setTimeout(()=>{ const inp=document.getElementById('prop-model'); if(inp){inp.focus();inp.select();} },40);
+      };
+      sub.appendChild(mSpan);
+      sub.appendChild(document.createTextNode(`${typeLabel(cam.type)} · ${Math.round(cam.fov)}° · ${rangeDisp}`));
+    } else {
+      sub.textContent=`${typeLabel(cam.type)} · ${Math.round(cam.fov)}° · ${rangeDisp}`;
+    }
+
+    info.appendChild(name); info.appendChild(sub);
+
+    const del=document.createElement('button');
+    del.className='cl-del'; del.title=t('cctv_delete');
+    del.onclick=ev=>{ev.stopPropagation();deleteCam(cam.id);};
+    del.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+    item.appendChild(dot); item.appendChild(info); item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+
+function updateStatus(){
+  document.getElementById('sb-cams').textContent=t('cctv_sb_cams')+' '+totalCams();
+}
+
+function setStatus(msg){ document.getElementById('sb-status').textContent=msg; }
+
+// ── Slider callbacks ──
+function updateName(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.label=v; render(); updateCamList();
+}
+function updateModel(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.model=v; render(); updateCamList();
+}
+function updateCamColor(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.color=v; render(); updateCamList();
+}
+function resetCamColor(){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return;
+  H.snapshot(); cam.color='';
+  document.getElementById('prop-color').value=TYPES[cam.type].color;
+  render(); updateCamList();
+}
+function updateAngle(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.angle=v;
+  setSlider('sl-angle','v-angle',v,0,359,TYPES[cam.type].color); render();
+}
+function updateFov(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.fov=v;
+  setSlider('sl-fov','v-fov',v,15,355,TYPES[cam.type].color); render(); updateCamList();
+}
+function updateRange(v){
+  const cam=S.sel?cams().find(c=>c.id===S.sel):null;
+  if(!cam) return; cam.range=v;
+  const t=TYPES[cam.type];
+  setSlider('sl-range','v-range',v,10,500,t.color);
+  const disp=S.pixelsPerMeter?(v/S.pixelsPerMeter).toFixed(1):Math.round(v);
+  document.getElementById('v-range').textContent=disp;
+  render(); updateCamList();
+}
+function updateLabelText(v){
+  if(!S.selAnno||S.selAnno.type!=='label') return;
+  const lbl=pageLbls().find(l=>l.id===S.selAnno.id);
+  if(!lbl) return; lbl.text=v; render();
+}
+function updateLabelSize(v){
+  if(!S.selAnno||S.selAnno.type!=='label') return;
+  const lbl=pageLbls().find(l=>l.id===S.selAnno.id);
+  if(!lbl) return; lbl.fontSize=v;
+  setSlider('sl-lbl-size','v-lbl-size',v,4,32,'#f5c518');
+  render();
+}
+function updateZoneLabel(v){
+  if(!S.selAnno||S.selAnno.type!=='zone') return;
+  const zone=pageZones().find(z=>z.id===S.selAnno.id);
+  if(!zone) return; zone.label=v; render();
+}
+
+// ── Export PNG ──
+function exportPNG(){
+  const pc=S.pageCache[S.page]; if(!pc) return;
+  const rs=pc.renderScale;
+  const exp=document.createElement('canvas');
+  exp.width=pc.canvas.width; exp.height=pc.canvas.height;
+  const ex=exp.getContext('2d');
+
+  ex.fillStyle='#ffffff'; ex.fillRect(0,0,exp.width,exp.height);
+  ex.drawImage(pc.canvas,0,0);
+
+  ex.save(); ex.scale(rs,rs);
+  for(const z of pageZones())  drawZone(ex,z,false);
+  for(const r of pageRulers()) drawRuler(ex,r,false);
+  const savedSel=S.sel; S.sel=null;
+  for(const c of cams()) drawCamera(ex,c,false);
+  S.sel=savedSel;
+  for(const l of pageLbls()) drawLabel(ex,l,false);
+  ex.restore();
+
+  // Watermark
+  ex.font=`700 ${Math.max(18,rs*9)}px Rajdhani,sans-serif`;
+  ex.fillStyle='rgba(0,0,0,.07)'; ex.textAlign='right';
+  ex.fillText('Māju Drošība SIA · CCTV Plan', exp.width-rs*8, exp.height-rs*7);
+
+  // Legend
+  const items=Object.entries(TYPES);
+  const lx=rs*8, lh=items.length*rs*18+rs*20;
+  const ly=exp.height-rs*8-lh;
+  ex.fillStyle='rgba(10,14,22,.75)';
+  ex.fillRect(lx-rs*4, ly-rs*4, rs*130, lh+rs*8);
+  ex.font=`700 ${rs*7}px Rajdhani,sans-serif`;
+  ex.fillStyle='rgba(180,200,230,.8)'; ex.textAlign='left';
+  ex.fillText(t('cctv_legend'),lx,ly+rs*8);
+  items.forEach(([key,ty],i)=>{
+    const oy=ly+rs*12+rs*4+i*rs*18;
+    ex.beginPath(); ex.arc(lx+rs*5,oy+rs*5,rs*4,0,Math.PI*2);
+    ex.fillStyle=ty.color; ex.fill();
+    ex.font=`600 ${rs*6.5}px Rajdhani,sans-serif`;
+    ex.fillStyle='rgba(200,220,240,.85)';
+    const tl=typeLabel(key);
+    ex.fillText(tl===ty.labelEn?tl:`${tl} (${ty.labelEn})`,lx+rs*13,oy+rs*8);
+  });
+  ex.font=`600 ${rs*7}px Rajdhani,sans-serif`;
+  ex.fillStyle='rgba(0,212,255,.9)'; ex.textAlign='right';
+  ex.fillText(`${t('cctv_exp_count')} ${cams().length}`, exp.width-rs*8, ly-rs*6);
+
+  const a=document.createElement('a');
+  a.download=`cctv-plan-p${S.page}.png`;
+  a.href=exp.toDataURL('image/png',0.95);
+  a.click();
+}
+
+// ── Init ──
+setTool('dome');
+resizeCanvas();
+
+// Re-render dynamic (JS-generated) texts when the language changes
+document.addEventListener('langChanged',()=>{
+  setTool(S.tool);
+  updateStatus();
+  updateScalePanel();
+  updateCamList();
+  updatePanel();
+  document.getElementById('snap-lbl-btn').textContent = S.snap ? t('cctv_on') : t('cctv_off');
+  if(!S.pdfDoc) setStatus(t('cctv_status_ready'));
+});
+
+// ── Send Plan ──
+function openSendModal(){
+  const cs=cams();
+  const dome=cs.filter(c=>c.type==='dome').length;
+  const bullet=cs.filter(c=>c.type==='bullet').length;
+  const ptz=cs.filter(c=>c.type==='ptz').length;
+  const lines=[
+    t('cctv_msg_hello'),
+    '',
+    `${t('cctv_msg_pages')} ${S.pages}`,
+    `${t('cctv_msg_cams')} ${totalCams()}${totalCams()?` (${t('cctv_msg_dome')}: ${dome}, ${t('cctv_msg_bullet')}: ${bullet}, PTZ: ${ptz})`:''}`,
+  ];
+  document.getElementById('sm-msg').value=lines.join('\n');
+  document.getElementById('sm-name').value='';
+  document.getElementById('sm-phone').value='';
+  document.getElementById('sm-form').style.display='';
+  document.getElementById('sm-success').style.display='none';
+  document.getElementById('sm-submit').disabled=false;
+  document.getElementById('sm-submit').textContent=t('cctv_sm_submit');
+  document.getElementById('send-modal').classList.add('open');
+}
+function closeSendModal(){ document.getElementById('send-modal').classList.remove('open'); }
+document.getElementById('send-modal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeSendModal(); });
+
+async function submitPlan(e){
+  e.preventDefault();
+  const name=document.getElementById('sm-name').value.trim();
+  const phone=document.getElementById('sm-phone').value.trim();
+  const msg=document.getElementById('sm-msg').value.trim();
+  const btn=document.getElementById('sm-submit');
+  btn.disabled=true; btn.textContent=t('cctv_sending');
+  try {
+    const r=await fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,phone,service:'CCTV Планировщик',message:msg})
+    });
+    if(r.ok){
+      document.getElementById('sm-form').style.display='none';
+      document.getElementById('sm-success').style.display='';
+      exportPNG();
+    } else {
+      btn.disabled=false; btn.textContent=t('cctv_sm_submit');
+      setStatus(t('cctv_send_err'));
+    }
+  } catch(err){
+    btn.disabled=false; btn.textContent=t('cctv_sm_submit');
+    setStatus(t('cctv_send_noconn'));
+  }
+}
+</script>
+
+<!-- ── Send Plan Modal ── -->
+<div id="send-modal">
+  <div id="send-box">
+    <button class="sm-x" onclick="closeSendModal()">✕</button>
+    <div id="sm-form">
+      <div class="sm-title" data-i18n="cctv_sm_title">Отправить план специалисту</div>
+      <div class="sm-sub" data-i18n="cctv_sm_sub">Специалист Māju Drošiba свяжется с вами<br>для расчёта и подбора оборудования</div>
+      <form onsubmit="submitPlan(event)">
+        <div class="sm-lbl" data-i18n="cctv_sm_name">Ваше имя *</div>
+        <input id="sm-name" type="text" required placeholder="Имя Фамилия" data-i18n-placeholder="cctv_sm_name_ph" class="prop-in" style="width:100%">
+        <div class="sm-lbl" data-i18n="cctv_sm_phone">Телефон *</div>
+        <input id="sm-phone" type="tel" required placeholder="+371 XX XXX XXX" class="prop-in" style="width:100%">
+        <div class="sm-lbl" data-i18n="cctv_sm_comment">Комментарий</div>
+        <textarea id="sm-msg" class="prop-in" rows="5"
+          style="width:100%;resize:vertical;font-size:11px;font-family:'JetBrains Mono',monospace;line-height:1.55"></textarea>
+        <button id="sm-submit" type="submit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2 15 22 11 13 2 9l20-7z"/></svg>
+          <span data-i18n="cctv_sm_submit">Отправить и скачать PNG</span>
+        </button>
+      </form>
+    </div>
+    <div id="sm-success">
+      <div class="sm-ok">✓</div>
+      <div class="sm-ok-title" data-i18n="cctv_sm_ok_title">План отправлен!</div>
+      <div class="sm-ok-sub" data-i18n="cctv_sm_ok_sub">Специалист свяжется с вами в течение 24 часов.<br>PNG экспортируется на ваш компьютер.</div>
+      <button class="sm-ok-close" data-i18n="cctv_sm_close" onclick="closeSendModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -11,10 +11,16 @@ function getLang() {
   return localStorage.getItem('lang') || getBrowserLang();
 }
 
+// Derive deploy-root from this script's own URL — works on any subpath
+// (localhost, /MajuDrosiba/, /door-website/, custom domain, etc.)
+const I18N_BASE = (function() {
+  const tag = document.currentScript
+    || [...document.getElementsByTagName('script')].find(s => /\/js\/i18n\.js(?:\?|$)/.test(s.src));
+  return tag ? tag.src.replace(/\/js\/i18n\.js.*$/, '/') : '/';
+})();
+
 async function loadLang(lang) {
-  const depth = window.location.pathname.split('/').filter(Boolean).length;
-  const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
-  const res = await fetch(`${prefix}lang/${lang}.json`);
+  const res = await fetch(`${I18N_BASE}lang/${lang}.json?v=16`);
   translations = await res.json();
 }
 
@@ -31,6 +37,10 @@ function applyTranslations() {
     const key = el.getAttribute('data-i18n-value');
     if (translations[key] !== undefined) el.value = translations[key];
   });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    if (translations[key] !== undefined) el.title = translations[key];
+  });
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === getLang());
   });
@@ -40,7 +50,9 @@ function applyTranslations() {
 async function setLanguage(lang) {
   if (!LANGS.includes(lang)) return;
   localStorage.setItem('lang', lang);
-  await loadLang(lang);
+  try {
+    await loadLang(lang);
+  } catch(e) { return; }
   applyTranslations();
   document.dispatchEvent(new Event('langChanged'));
 }
@@ -49,8 +61,13 @@ window.i18n = key => translations[key] !== undefined ? translations[key] : key;
 
 async function initI18n() {
   const lang = getLang();
-  await loadLang(lang);
-  applyTranslations();
+  try {
+    await loadLang(lang);
+    applyTranslations();
+    document.dispatchEvent(new Event('langChanged'));
+  } catch(e) {
+    console.warn('i18n load failed:', e);
+  }
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });

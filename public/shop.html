@@ -58,6 +58,24 @@
       <div class="shop-filter" id="shop-filter">
         <button class="filter-btn active" data-cat="" data-i18n="shop_all">Visi</button>
       </div>
+      <div class="shop-subfilter" id="shop-subfilter" style="display:none"></div>
+      <div class="shop-toolbar">
+        <div class="shop-count" id="shop-count"></div>
+        <label class="shop-vat">
+          <input type="checkbox" id="shop-vat" checked>
+          <span data-i18n="shop_vat_lbl">Cena ar PVN 21%</span>
+        </label>
+        <label class="shop-sort">
+          <span data-i18n="shop_sort_lbl">Kārtot:</span>
+          <select id="shop-sort">
+            <option value="featured" data-i18n="shop_sort_featured">Ieteicamie</option>
+            <option value="price-asc" data-i18n="shop_sort_price_asc">Cena: lētākie</option>
+            <option value="price-desc" data-i18n="shop_sort_price_desc">Cena: dārgākie</option>
+            <option value="name-asc" data-i18n="shop_sort_name_asc">Nosaukums A → Z</option>
+            <option value="newest" data-i18n="shop_sort_newest">Jaunākie</option>
+          </select>
+        </label>
+      </div>
       <div class="product-grid" id="product-grid">
         <div class="products-empty" data-i18n="shop_empty">Produkti tiek ielādēti…</div>
       </div>
@@ -67,12 +85,18 @@
   <footer class="footer">
     <div class="container footer-inner">
       <span class="footer-logo">MĀJU<strong>DROŠĪBA</strong></span>
+      <nav class="footer-links">
+        <a href="terms.html" data-i18n="footer_terms">Lietošanas noteikumi</a>
+        <a href="privacy.html" data-i18n="footer_privacy">Privātuma politika</a>
+      </nav>
       <span class="footer-copy" data-i18n="footer_copy">&copy; 2025 Māju drošība. Visas tiesības aizsargātas.</span>
     </div>
   </footer>
 
   <script src="js/main.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/price.js"></script>
+  <script src="js/product-modal.js"></script>
   <script src="js/shop.js"></script>
 </body>
 </html>
