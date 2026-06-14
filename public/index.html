@@ -40,11 +40,18 @@
     "image": "https://majudrosiba.onrender.com/uploads/hero/hero.jpg",
     "logo": "https://majudrosiba.onrender.com/favicon.svg",
     "telephone": "+37127221212",
-    "email": "vladimir.ansevics@gmail.com",
+    "email": "info@majudrosiba.lv",
     "priceRange": "€€",
     "currenciesAccepted": "EUR",
     "areaServed": ["Rīga", "Jūrmala", "Mārupe", "Ķekava", "Olaine", "Salaspils"],
-    "openingHours": ["Mo-Fr 08:00-20:00", "Sa-Su 09:00-18:00"],
+    "openingHours": ["Mo-Fr 08:00-20:00"],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Braslas iela 22b",
+      "addressLocality": "Rīga",
+      "postalCode": "LV-1009",
+      "addressCountry": "LV"
+    },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "Drošības pakalpojumi",
@@ -254,21 +261,48 @@
           <h3 data-i18n="contact_phone">Tālrunis</h3>
           <a href="tel:+37127221212" class="contact-link">27-22-12-12</a>
         </div>
+        <div class="contact-card contact-card--whatsapp">
+          <div class="contact-icon contact-icon--wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.94 9.94 0 004.74 1.21C17.5 21.83 21.95 17.38 21.95 11.92 21.95 9.27 20.92 6.78 19.05 4.91 17.18 3.03 14.69 2 12.04 2zm0 1.67c2.2 0 4.26.86 5.82 2.42 1.55 1.56 2.41 3.63 2.41 5.83 0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.19-.32A8.13 8.13 0 013.8 11.91c.01-4.54 3.7-8.24 8.24-8.24zm-2.53 4.33-.24.01c-.16 0-.42.06-.65.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1.02 2.56.13.17 1.75 2.67 4.24 3.72.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.59 1.67-1.17.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.13-.11.15-.43.62-.6.81-.15.18-.3.21-.55.1-.26-.11-1.04-.36-1.97-1.18-.73-.65-1.22-1.44-1.37-1.69-.14-.25-.02-.38.1-.5.11-.11.25-.28.37-.43.12-.14.15-.25.24-.44.09-.18.04-.34-.02-.44-.07-.11-.56-1.33-.77-1.82-.19-.47-.4-.41-.55-.42l-.45-.01z"/></svg></div>
+          <h3 data-i18n="contact_whatsapp">WhatsApp</h3>
+          <a href="https://wa.me/37127221212" target="_blank" rel="noopener" class="contact-link">27-22-12-12</a>
+        </div>
         <div class="contact-card">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
           <h3 data-i18n="contact_email">E-pasts</h3>
-          <a href="mailto:vladimir.ansevics@gmail.com" class="contact-link">vladimir.ansevics@gmail.com</a>
+          <a href="mailto:info@majudrosiba.lv" class="contact-link">info@majudrosiba.lv</a>
         </div>
         <div class="contact-card">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
           <h3 data-i18n="contact_hours">Darba laiks</h3>
           <p data-i18n="contact_hours_week">Pirmdiena–Piektdiena: 8:00–20:00</p>
-          <p data-i18n="contact_hours_weekend">Sestdiena–Svētdiena: 9:00–18:00</p>
+          <p data-i18n="contact_hours_weekend">Sestdiena–Svētdiena: Slēgts</p>
+          <p class="contact-hours-sos" data-i18n="contact_hours_sos">* SOS dienests — visu diennakti</p>
         </div>
         <div class="contact-card">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <h3 data-i18n="contact_region">Apkalpojamais reģions</h3>
           <p data-i18n="contact_region_text">Rīga, Jūrmala, Mārupe,<br>Ķekava, Olaine, Salaspils</p>
+        </div>
+      </div>
+
+      <div class="contact-bottom">
+        <div class="contact-map">
+          <iframe
+            src="https://maps.google.com/maps?q=Braslas+iela+22b,+Riga,+Latvia&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+            width="100%" height="320" frameborder="0" style="border:0" allowfullscreen loading="lazy"
+            title="Māju Drošība — Braslas iela 22b, Rīga"></iframe>
+        </div>
+
+        <div class="contact-requisites">
+          <h3 class="contact-requisites-title" data-i18n="contact_requisites_title">Uzņēmuma rekvizīti</h3>
+          <div class="requisites-grid">
+            <div class="req-item"><span class="req-label" data-i18n="req_name">Nosaukums</span><span class="req-value">Māju Drošība SIA</span></div>
+            <div class="req-item"><span class="req-label" data-i18n="req_legal_addr">Jur. adrese</span><span class="req-value">Duntes iela 28-69, Rīga, LV-1005</span></div>
+            <div class="req-item"><span class="req-label" data-i18n="req_office">Ofiss / Noliktava</span><span class="req-value">Braslas iela 22b, 18. kab., Rīga</span></div>
+            <div class="req-item"><span class="req-label" data-i18n="req_reg">Reģ. Nr.</span><span class="req-value">40203622224</span></div>
+            <div class="req-item"><span class="req-label" data-i18n="req_pvn">PVN Nr.</span><span class="req-value">LV40203622224</span></div>
+            <div class="req-item"><span class="req-label" data-i18n="req_bank">Bankas konts</span><span class="req-value">LV84HABA0551060219209 <span class="req-bank-name">· Swedbank AS</span></span></div>
+          </div>
         </div>
       </div>
 

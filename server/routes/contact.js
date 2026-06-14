@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     });
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_TO || 'vladimir.ansevics@gmail.com',
+      to: process.env.EMAIL_TO || 'info@majudrosiba.lv',
       subject: `Jauns pieprasījums — ${service || 'Vispārējs'}`,
       text: `Vārds: ${name}\nTālrunis: ${phone}\nPakalpojums: ${service || '—'}\n\n${message || ''}`,
     });
