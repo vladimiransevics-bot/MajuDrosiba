@@ -2,6 +2,7 @@ require('./database'); // init DB on startup
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { requireAuth } = require('./auth');
 
@@ -18,6 +19,9 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.set('trust proxy', 1); // behind Render's proxy — needed for correct client IP
+
+// ── gzip / brotli compression on all responses ──
+app.use(compression());
 
 // ── Security headers ──
 app.use(helmet({
@@ -62,7 +66,24 @@ app.post('/api/admin/login', (req, res) => {
 // ── Admin panel: gate BEFORE static so the HTML is never served unauthenticated ──
 app.use('/admin', requireAuth);
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), {
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.html') {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate'); // always revalidate HTML
+    } else if (ext === '.css' || ext === '.js') {
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // 1h — no hash-versioning yet
+    } else if (['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.avif'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800'); // 7d
+    } else if (['.woff', '.woff2', '.ttf', '.otf'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable'); // 30d
+    } else if (ext === '.xml' || ext === '.txt') {
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // sitemap/robots: 1h
+    }
+  },
+}));
 
 // ── Public form endpoints (no auth, rate-limited) ──
 app.use('/api/contact', formLimiter, require('./routes/contact'));
