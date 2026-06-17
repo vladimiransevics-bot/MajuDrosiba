@@ -24,14 +24,15 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net", "https://www.googletagmanager.com"],
+      scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers (onclick etc. used in admin + cart)
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https://*.google.com", "https://*.googleapis.com", "https://*.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
       workerSrc: ["'self'", "blob:", "https://cdnjs.cloudflare.com"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", "https://www.googletagmanager.com", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googleadservices.com", "https://*.g.doubleclick.net", "https://www.google.com"],
       objectSrc: ["'none'"],
-      frameSrc: ["https://www.google.com", "https://maps.google.com", "https://maps.googleapis.com"],
+      frameSrc: ["https://www.google.com", "https://maps.google.com", "https://maps.googleapis.com", "https://td.doubleclick.net"],
       frameAncestors: ["'self'"],
     },
   },
@@ -45,6 +46,17 @@ const formLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, max: 8,
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Too many requests, please try again later' },
+});
+
+// ── Admin login endpoint (public — issues a token) ──
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body || {};
+  const { validateCredentials, createToken } = require('./auth');
+  if (validateCredentials(username, password)) {
+    res.json({ token: createToken() });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
 });
 
 // ── Admin panel: gate BEFORE static so the HTML is never served unauthenticated ──
@@ -72,6 +84,14 @@ app.use('/api/orders',
 // ── Admin-only tools ──
 app.use('/api/upload',    requireAuth, require('./routes/upload'));
 app.use('/api/translate', requireAuth, require('./routes/translate'));
+
+// ── Google Merchant Center product feed (public, read-only) ──
+app.use('/feed.xml', require('./routes/feed'));
+
+// Return 404 for unmatched API routes instead of serving HTML
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
 
 // SPA fallback for service pages
 app.get('*', (req, res) => {

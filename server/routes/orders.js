@@ -34,6 +34,10 @@ router.get('/', (req, res) => {
 
 router.put('/:id/status', (req, res) => {
   const { status } = req.body;
+  const VALID = new Set(['new', 'processing', 'done', 'canceled']);
+  if (!status || !VALID.has(status)) {
+    return res.status(400).json({ error: 'Invalid status value' });
+  }
   db.prepare('UPDATE orders SET status=? WHERE id=?').run(status, req.params.id);
   res.json({ ok: true });
 });

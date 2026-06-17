@@ -65,6 +65,10 @@
       border: 1px solid #1e2d45 !important;
       border-radius: 8px 8px 0 0;
     }
+    /* Fix: SVG icons in Quill toolbar have no width/height attrs → browser stretches them */
+    .ql-snow .ql-toolbar button svg,
+    .ql-snow.ql-toolbar button svg { width: 18px !important; height: 18px !important; }
+    .ql-snow .ql-picker-label svg { width: 18px !important; height: 18px !important; position: static !important; margin-top: 0 !important; }
     .ql-toolbar.ql-snow .ql-stroke { stroke: #8a9ab5; }
     .ql-toolbar.ql-snow .ql-fill { fill: #8a9ab5; }
     .ql-toolbar.ql-snow .ql-picker-label { color: #8a9ab5; }
@@ -123,6 +127,9 @@
     }
     .btn-delete-sel:hover { background: #a93226; }
     .col-check { width: 36px; text-align: center; }
+
+    /* ── Carousel product list hover ── */
+    #car-product-list [data-action="car-add"]:hover { background: rgba(245,166,35,.07); }
 
     /* ── Category row clickable ── */
     .cat-row { cursor: pointer; transition: background .15s; }
@@ -416,7 +423,57 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+  <!-- Login overlay -->
+  <div id="login-overlay" style="display:none;position:fixed;inset:0;background:#050d1a;z-index:9999;display:flex;align-items:center;justify-content:center">
+    <div style="background:#0d1f38;border:1px solid #1e2d45;border-radius:16px;padding:40px 48px;width:360px;text-align:center">
+      <div style="font-family:'Exo 2',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:8px">MĀJU<span style="color:#f5a623">DROŠĪBA</span></div>
+      <div style="color:#8a9ab5;font-size:0.9rem;margin-bottom:28px">Admin panelis</div>
+      <input id="login-user" type="text" value="admin" placeholder="Lietotājs"
+        style="width:100%;padding:10px 14px;background:#0a1628;border:1px solid #1e2d45;border-radius:8px;color:#e8edf5;font-family:inherit;font-size:0.9rem;box-sizing:border-box;margin-bottom:10px">
+      <input id="login-pass" type="password" placeholder="Parole"
+        style="width:100%;padding:10px 14px;background:#0a1628;border:1px solid #1e2d45;border-radius:8px;color:#e8edf5;font-family:inherit;font-size:0.9rem;box-sizing:border-box;margin-bottom:16px">
+      <button id="login-btn"
+        style="width:100%;padding:11px;background:#f5a623;color:#050d1a;border:none;border-radius:8px;font-family:inherit;font-size:0.95rem;font-weight:700;cursor:pointer">
+        Ieiet
+      </button>
+      <div id="login-err" style="color:#ff7070;font-size:0.85rem;margin-top:12px;display:none">Nepareizs lietotājvārds vai parole</div>
+    </div>
+  </div>
+
   <script>
+    // ── Auth: token stored in sessionStorage, sent as Bearer with all /api/ calls ──
+    (function () {
+      const _fetch = window.fetch.bind(window);
+      window.fetch = function (url, opts = {}) {
+        const token = sessionStorage.getItem('adminToken');
+        if (token && typeof url === 'string' && url.startsWith('/api/')) {
+          opts = { ...opts, headers: { ...opts.headers, 'Authorization': 'Bearer ' + token } };
+        }
+        return _fetch(url, opts);
+      };
+    })();
+
+    async function doLogin() {
+      const username = document.getElementById('login-user').value.trim();
+      const password = document.getElementById('login-pass').value;
+      const err = document.getElementById('login-err');
+      err.style.display = 'none';
+      const res = await window.fetch.call(window, '/api/admin/login',
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+      if (res.ok) {
+        const { token } = await res.json();
+        sessionStorage.setItem('adminToken', token);
+        document.getElementById('login-overlay').style.display = 'none';
+        initAdmin();
+      } else {
+        err.style.display = 'block';
+      }
+    }
+
+    document.getElementById('login-btn').addEventListener('click', doLogin);
+    document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
     let allProducts = [];
     let allCategories = [];
     let editingId = null;
@@ -518,8 +575,8 @@
             ? '<span style="color:#4caf7d">✓ Noliktavā</span>'
             : '<span style="color:#f5a623">⏱ Pēc pas.</span>'}</td>
           <td>
-            <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Rediģēt</button>
-            <button class="btn-danger" onclick="deleteProduct(${p.id})">Dzēst</button>
+            <button class="btn btn-ghost btn-sm" data-action="edit" data-pid="${p.id}">Rediģēt</button>
+            <button class="btn-danger" data-action="delete" data-pid="${p.id}">Dzēst</button>
           </td>
         </tr>`;
       }).join('');
@@ -555,7 +612,7 @@
           <td class="order-items">${items.map(i => `${i.name}${i.sku ? ` <code style="color:#8a9ab5;font-size:.74rem">(${i.sku})</code>` : ''} × ${i.qty}`).join('<br>')}</td>
           <td>${o.total.toFixed(2)} €</td>
           <td>
-            <select class="form-input" style="padding:4px 8px;font-size:.78rem" onchange="updateStatus(${o.id}, this.value)">
+            <select class="form-input" style="padding:4px 8px;font-size:.78rem" data-oid="${o.id}">
               <option value="new" ${o.status==='new'?'selected':''}>Jauns</option>
               <option value="processing" ${o.status==='processing'?'selected':''}>Apstrādē</option>
               <option value="done" ${o.status==='done'?'selected':''}>Izpildīts</option>
@@ -828,7 +885,7 @@
           ${p.image_url ? `<img src="${p.image_url}" style="width:40px;height:40px;object-fit:cover;border-radius:4px">` : '<div style="width:40px;height:40px;background:#1e2d45;border-radius:4px;flex-shrink:0"></div>'}
           <span style="flex:1;font-size:.88rem">${p.name_lv}</span>
           <span style="color:#f5a623;font-size:.82rem;margin-right:8px">${p.price.toFixed(2)} €</span>
-          <button class="btn-danger" style="padding:4px 10px;font-size:.78rem" onclick="carRemove(${p.id})">✕</button>
+          <button class="btn-danger" style="padding:4px 10px;font-size:.78rem" data-action="car-remove" data-pid="${p.id}">✕</button>
         </div>`).join('');
     }
 
@@ -838,10 +895,8 @@
       if (filter) list = list.filter(p => p.name_lv.toLowerCase().includes(filter.toLowerCase()));
       const el = document.getElementById('car-product-list');
       el.innerHTML = list.length ? list.map(p => `
-        <div onclick="carAdd(${p.id})"
-          style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid #1e2d45;transition:background .15s"
-          onmouseover="this.style.background='rgba(245,166,35,.07)'"
-          onmouseout="this.style.background=''">
+        <div data-action="car-add" data-pid="${p.id}"
+          style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid #1e2d45;transition:background .15s">
           ${p.image_url ? `<img src="${p.image_url}" style="width:36px;height:36px;object-fit:cover;border-radius:4px">` : '<div style="width:36px;height:36px;background:#1e2d45;border-radius:4px;flex-shrink:0"></div>'}
           <span style="flex:1;font-size:.86rem">${p.name_lv}</span>
           <span style="color:#8a9ab5;font-size:.8rem">${p.price.toFixed(2)} €</span>
@@ -890,7 +945,7 @@
         const parentName = c.parent_id ? (allCategories.find(x => x.id === c.parent_id) || {name_lv:'?'}).name_lv : '—';
         const totalCount = getCatDescendantIds(c.id).reduce((s, id) => s + (productCounts[id] || 0), 0);
         const countLabel = totalCount > 0
-          ? `<button class="cat-count-btn" onclick="event.stopPropagation();showCatProducts('${c.id}')">${totalCount}</button>`
+          ? `<button class="cat-count-btn" data-action="show-products" data-catid="${c.id}">${totalCount}</button>`
           : `<span style="color:#8a9ab5">0</span>`;
         return `<tr class="cat-row" data-catid="${c.id}">
           <td>${c._label}</td>
@@ -899,16 +954,24 @@
           <td>${c.sort_order || 0}</td>
           <td>${countLabel}</td>
           <td>
-            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editCategory('${c.id}')">Rediģēt</button>
-            <button class="btn-danger" onclick="event.stopPropagation();deleteCategory('${c.id}')">Dzēst</button>
+            <button class="btn btn-ghost btn-sm" data-action="edit-cat" data-catid="${c.id}">Rediģēt</button>
+            <button class="btn-danger" data-action="delete-cat" data-catid="${c.id}">Dzēst</button>
           </td>
         </tr>`;
       }).join('');
     }
 
-    // Category row click → show products
+    // Category row click → show products, or handle action buttons
     document.getElementById('cat-tbody').addEventListener('click', function(e) {
-      if (e.target.closest('button')) return;
+      const btn = e.target.closest('[data-action]');
+      if (btn) {
+        e.stopPropagation();
+        const catid = btn.dataset.catid;
+        if (btn.dataset.action === 'show-products') showCatProducts(catid);
+        else if (btn.dataset.action === 'edit-cat') editCategory(catid);
+        else if (btn.dataset.action === 'delete-cat') deleteCategory(catid);
+        return;
+      }
       const row = e.target.closest('tr[data-catid]');
       if (!row) return;
       document.querySelectorAll('#cat-tbody tr.cat-row').forEach(r => r.classList.remove('selected'));
@@ -1009,8 +1072,8 @@
             <td>${p.price.toFixed(2)} €</td>
             <td>${p.in_stock ? '✓' : '✗'}</td>
             <td>
-              <button class="btn btn-ghost btn-sm" onclick="goEditProduct(${p.id})">✏️ Rediģēt</button>
-              <button class="btn-danger" onclick="deleteCatProduct(${p.id})">Dzēst</button>
+              <button class="btn btn-ghost btn-sm" data-action="go-edit" data-pid="${p.id}">✏️ Rediģēt</button>
+              <button class="btn-danger" data-action="delete-cat-prod" data-pid="${p.id}">Dzēst</button>
             </td>
           </tr>`;
         }).join('');
@@ -1090,11 +1153,64 @@
       await loadCategories();
     }
 
-    // Init
-    (async () => {
-      await loadProducts();   // products first so renderCatTable can show product counts
-      await loadCategories(); // also calls renderCatTable
+    // ── Event delegation (replaces inline onclick/onchange blocked by CSP) ──
+
+    // Products table: edit / delete
+    document.getElementById('products-tbody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const pid = parseInt(btn.dataset.pid);
+      if (btn.dataset.action === 'edit') editProduct(pid);
+      else if (btn.dataset.action === 'delete') deleteProduct(pid);
+    });
+
+    // Orders table: status change
+    document.getElementById('orders-tbody').addEventListener('change', e => {
+      const sel = e.target.closest('select[data-oid]');
+      if (sel) updateStatus(parseInt(sel.dataset.oid), sel.value);
+    });
+
+    // Categories table: count / edit / delete (merged with existing row-click logic below)
+    // Categories product panel: edit / delete
+    document.getElementById('cat-products-tbody').addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const pid = parseInt(btn.dataset.pid);
+      if (btn.dataset.action === 'go-edit') goEditProduct(pid);
+      else if (btn.dataset.action === 'delete-cat-prod') deleteCatProduct(pid);
+    });
+
+    // Carousel: remove from selected
+    document.getElementById('car-selected').addEventListener('click', e => {
+      const btn = e.target.closest('[data-action="car-remove"]');
+      if (btn) carRemove(parseInt(btn.dataset.pid));
+    });
+
+    // Carousel: add from product list
+    document.getElementById('car-product-list').addEventListener('click', e => {
+      const item = e.target.closest('[data-action="car-add"]');
+      if (item) carAdd(parseInt(item.dataset.pid));
+    });
+
+    async function initAdmin() {
+      await loadProducts();
+      await loadCategories();
       await loadOrders();
+    }
+
+    // Start: check token, show login or init directly
+    (async () => {
+      const token = sessionStorage.getItem('adminToken');
+      if (token) {
+        const test = await fetch('/api/products/all');
+        if (test.ok) {
+          document.getElementById('login-overlay').style.display = 'none';
+          initAdmin();
+          return;
+        }
+        sessionStorage.removeItem('adminToken');
+      }
+      document.getElementById('login-overlay').style.display = 'flex';
     })();
   </script>
 </body>

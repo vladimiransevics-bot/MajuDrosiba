@@ -59,6 +59,9 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { name_lv, name_ru, name_en, desc_lv, desc_ru, desc_en, price, image_url, in_stock, category_id, display_order, sku } = req.body;
+  if (!category_id || !name_lv || !name_ru || !name_en || price == null) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
   let finalSku = (sku || '').trim();
   if (finalSku) {
     const existing = db.prepare('SELECT id FROM products WHERE sku = ? AND id != ?').get(finalSku, req.params.id);
@@ -66,10 +69,14 @@ router.put('/:id', (req, res) => {
   } else {
     finalSku = generateSku();
   }
-  db.prepare(
-    'UPDATE products SET category_id=?, name_lv=?, name_ru=?, name_en=?, desc_lv=?, desc_ru=?, desc_en=?, price=?, image_url=?, in_stock=?, display_order=?, sku=? WHERE id=?'
-  ).run(category_id, name_lv, name_ru, name_en, desc_lv||'', desc_ru||'', desc_en||'', price, image_url||'', in_stock ?? 1, display_order || 0, finalSku, req.params.id);
-  res.json({ ok: true, sku: finalSku });
+  try {
+    db.prepare(
+      'UPDATE products SET category_id=?, name_lv=?, name_ru=?, name_en=?, desc_lv=?, desc_ru=?, desc_en=?, price=?, image_url=?, in_stock=?, display_order=?, sku=? WHERE id=?'
+    ).run(category_id, name_lv, name_ru, name_en, desc_lv||'', desc_ru||'', desc_en||'', price, image_url||'', in_stock ?? 1, display_order || 0, finalSku, req.params.id);
+    res.json({ ok: true, sku: finalSku });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 router.delete('/images/:imgId', (req, res) => {

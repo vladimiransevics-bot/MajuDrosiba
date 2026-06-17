@@ -40,13 +40,20 @@ function wouldCycle(catId, newParent) {
 
 router.put('/:id', (req, res) => {
   const { name_lv, name_ru, name_en, parent_id, sort_order } = req.body || {};
+  if (!name_lv || !name_ru || !name_en) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
   if (parent_id && wouldCycle(req.params.id, parent_id)) {
     return res.status(400).json({ error: 'cycle detected' });
   }
-  db.prepare(
-    'UPDATE categories SET name_lv=?, name_ru=?, name_en=?, parent_id=?, sort_order=? WHERE id=?'
-  ).run(name_lv, name_ru, name_en, parent_id || null, sort_order || 0, req.params.id);
-  res.json({ ok: true });
+  try {
+    db.prepare(
+      'UPDATE categories SET name_lv=?, name_ru=?, name_en=?, parent_id=?, sort_order=? WHERE id=?'
+    ).run(name_lv, name_ru, name_en, parent_id || null, sort_order || 0, req.params.id);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 router.delete('/:id', (req, res) => {
