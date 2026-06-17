@@ -1,3 +1,12 @@
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getCart() {
   return JSON.parse(localStorage.getItem('cart') || '[]');
 }
@@ -35,13 +44,13 @@ function render() {
 
   itemsEl.innerHTML = cart.map((item, idx) => `
     <div class="cart-item">
-      <div class="cart-item-name">${item.name}</div>
+      <div class="cart-item-name">${escapeHtml(item.name)}</div>
       <div class="cart-item-controls">
-        <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+        <button class="qty-btn" data-idx="${idx}" data-delta="-1">−</button>
         <span class="qty-val">${item.qty}</span>
-        <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+        <button class="qty-btn" data-idx="${idx}" data-delta="1">+</button>
         <span class="cart-item-price">${window.PriceFmt.format(item.price * item.qty)}</span>
-        <button class="remove-btn" onclick="removeItem(${idx})" title="Noņemt">×</button>
+        <button class="remove-btn" data-idx="${idx}" title="Noņemt">×</button>
       </div>
     </div>`).join('');
 }
@@ -96,6 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
   loadCustomerInfo();
 
+  // Delegated handler for qty/remove buttons (inline onclick disabled by CSP)
+  document.getElementById('cart-items').addEventListener('click', e => {
+    const qtyBtn = e.target.closest('.qty-btn');
+    const removeBtn = e.target.closest('.remove-btn');
+    if (qtyBtn) changeQty(parseInt(qtyBtn.dataset.idx), parseInt(qtyBtn.dataset.delta));
+    else if (removeBtn) removeItem(parseInt(removeBtn.dataset.idx));
+  });
+
   document.querySelectorAll('input[name="customer_type"]').forEach(r => {
     r.addEventListener('change', updateB2BVisibility);
   });
@@ -141,6 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (window.GAds) window.GAds.purchase(data.id, total, cart);
         saveCustomerInfo(payload);
         localStorage.removeItem('cart');
         msg.textContent = t('cart_success');

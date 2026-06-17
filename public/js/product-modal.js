@@ -16,6 +16,7 @@
     if (ex) ex.qty++;
     else cart.push({ id: id, sku: sku || '', name: name, price: price, qty: 1 });
     localStorage.setItem('cart', JSON.stringify(cart));
+    if (window.GAds) window.GAds.addToCart({ id: id, sku: sku, price: price, qty: 1 });
     const countEl = document.getElementById('cart-count');
     if (countEl) countEl.textContent = cart.reduce(function (s, i) { return s + i.qty; }, 0);
   }
@@ -43,6 +44,7 @@
 
   window.openProductModal = async function (p) {
     _current = p;
+    if (window.GAds) window.GAds.viewItem(p);
     var lang = getLang();
     var name = p['name_' + lang] || p.name_lv || '';
 

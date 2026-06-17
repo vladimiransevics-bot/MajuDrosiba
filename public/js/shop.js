@@ -25,6 +25,10 @@ function addToCart(id, name, price, btn) {
     cart.push({ id, sku, name, price, qty: 1 });
   }
   localStorage.setItem('cart', JSON.stringify(cart));
+  if (window.GAds) {
+    const cached = window._productCache && window._productCache[id];
+    window.GAds.addToCart({ id, sku: cached ? (cached.sku || '') : '', price, qty: 1 });
+  }
   updateCartCount();
   btn.textContent = '✓';
   setTimeout(() => btn.textContent = (window.i18n && window.i18n('shop_add')) || '+ Cart', 1500);
@@ -79,6 +83,14 @@ function filteredProducts() {
   return sortProducts(list);
 }
 
+function escapeAttr(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function renderProducts(products) {
   const lang = getLang();
   const grid = document.getElementById('product-grid');
@@ -94,30 +106,49 @@ function renderProducts(products) {
   const moreLabel = (window.i18n && window.i18n('shop_more') !== 'shop_more') ? window.i18n('shop_more') : 'Sīkāk';
   const preOrderLabel = (window.i18n && window.i18n('shop_pre_order') !== 'shop_pre_order') ? window.i18n('shop_pre_order') : 'Pēc pasūtījuma';
   const deliveryLabel = (window.i18n && window.i18n('shop_delivery_time') !== 'shop_delivery_time') ? window.i18n('shop_delivery_time') : 'Piegāde 7–14 darba dienas';
+  const addLabel = (window.i18n && window.i18n('shop_add') !== 'shop_add') ? window.i18n('shop_add') : '+ Cart';
   grid.innerHTML = products.map(p => {
     if (window.cacheProduct) window.cacheProduct(p);
     const name = p['name_' + lang] || p.name_lv;
     const desc = p['desc_' + lang] || p.desc_lv || '';
     const imgHtml = p.image_url
-      ? `<img src="${p.image_url}" alt="${name}" loading="lazy">`
+      ? `<img src="${escapeAttr(p.image_url)}" alt="${escapeAttr(name)}" loading="lazy">`
       : `<svg class="product-img-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`;
     const stockBadge = !p.in_stock
       ? `<div class="product-stock-badge pre-order"><strong data-i18n="shop_pre_order">${preOrderLabel}</strong><span data-i18n="shop_delivery_time">${deliveryLabel}</span></div>`
       : '';
-    return `<div class="product-card${!p.in_stock ? ' is-pre-order' : ''}" onclick="window.openProductModal&&window.openProductModal(window._productCache[${p.id}])">
+    return `<div class="product-card${!p.in_stock ? ' is-pre-order' : ''}" data-pid="${p.id}">
       <div class="product-img">${imgHtml}</div>
       <div class="product-body">
-        <div class="product-name">${name}</div>
+        <div class="product-name">${escapeAttr(name)}</div>
         ${stockBadge}
         <div class="product-desc">${desc}</div>
         <button type="button" class="product-more" data-i18n="shop_more">${moreLabel}</button>
         <div class="product-footer">
           <div class="product-price">${window.PriceFmt.format(p.price)}</div>
-          <button class="btn btn-primary btn-add" onclick="event.stopPropagation();addToCart(${p.id},'${name.replace(/'/g, "\\'")}',${p.price},this)">${(window.i18n && window.i18n('shop_add') !== 'shop_add') ? window.i18n('shop_add') : '+ Cart'}</button>
+          <button class="btn btn-primary btn-add" data-pid="${p.id}">${addLabel}</button>
         </div>
       </div>
     </div>`;
   }).join('');
+
+  // Wire up event delegation for cards and add-to-cart buttons
+  grid.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('click', e => {
+      const addBtn = e.target.closest('.btn-add');
+      if (addBtn) {
+        e.stopPropagation();
+        const pid = parseInt(addBtn.dataset.pid);
+        const prod = window._productCache && window._productCache[pid];
+        if (prod) addToCart(pid, prod['name_' + getLang()] || prod.name_lv, prod.price, addBtn);
+        return;
+      }
+      const pid = parseInt(card.dataset.pid);
+      const prod = window._productCache && window._productCache[pid];
+      if (prod && window.openProductModal) window.openProductModal(prod);
+    });
+  });
+
   requestAnimationFrame(detectClampedDescs);
 }
 
@@ -237,6 +268,13 @@ async function init() {
 
   wireUp();
   update();
+
+  // Deep link from Shopping ads / feed: /shop.html?product=ID opens that product
+  const deepId = parseInt(params.get('product'));
+  if (deepId && window.openProductModal) {
+    const prod = allProducts.find(p => p.id === deepId);
+    if (prod) window.openProductModal(prod);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
