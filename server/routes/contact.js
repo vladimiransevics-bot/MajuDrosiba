@@ -15,10 +15,17 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
+    // EMAIL_HOST = generic SMTP (beget mail, etc.); falls back to Gmail
+    const transporter = nodemailer.createTransport(
+      process.env.EMAIL_HOST
+        ? {
+            host: process.env.EMAIL_HOST,
+            port: Number(process.env.EMAIL_PORT || 465),
+            secure: process.env.EMAIL_PORT !== '587',
+            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+          }
+        : { service: 'gmail', auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS } }
+    );
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_TO || 'info@majudrosiba.lv',

@@ -1,3 +1,4 @@
+require('dotenv').config(); // load .env before anything else
 require('./database'); // init DB on startup
 const express = require('express');
 const path = require('path');
