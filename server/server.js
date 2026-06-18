@@ -1,4 +1,4 @@
-require('dotenv').config(); // load .env before anything else
+try { require('dotenv').config(); } catch (e) {} // optional: load .env if present (no-op on Passenger/beget)
 require('./database'); // init DB on startup
 const express = require('express');
 const path = require('path');
