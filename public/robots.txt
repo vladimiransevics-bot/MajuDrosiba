@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /cart.html
 
-Sitemap: https://majudrosiba.onrender.com/sitemap.xml
+Sitemap: https://majudrosiba.lv/sitemap.xml

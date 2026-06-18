@@ -4,7 +4,7 @@ const express = require('express');
 const db = require('../database');
 const router = express.Router();
 
-const BASE = process.env.SITE_ORIGIN || 'https://majudrosiba.onrender.com';
+const BASE = process.env.SITE_ORIGIN || 'https://majudrosiba.lv';
 const VAT_RATE = 0.21; // DB stores prices EXCLUDING VAT; Merchant Center (EU) requires tax-inclusive
 
 // DB fields (imported from HTML sources) may already hold entities like &amp;.

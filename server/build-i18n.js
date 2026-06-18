@@ -6,7 +6,7 @@ const path = require('path');
 const cheerio = require('cheerio');
 
 const PUBLIC = path.join(__dirname, '../public');
-const BASE = process.env.SITE_ORIGIN || 'https://majudrosiba.onrender.com';
+const BASE = process.env.SITE_ORIGIN || 'https://majudrosiba.lv';
 const LANGS = ['ru', 'en'];
 const OG_LOCALE = { lv: 'lv_LV', ru: 'ru_RU', en: 'en_US' };
 
