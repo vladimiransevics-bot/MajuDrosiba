@@ -88,3 +88,36 @@ window.addEventListener('scroll', () => {
 
   cards.forEach(c => io.observe(c));
 })();
+
+// Sticky mobile CTA: visible only when user has scrolled past hero AND footer is not visible.
+// Uses two IntersectionObservers to avoid scroll listeners.
+(function initMobileCTA() {
+  const cta = document.getElementById('mobile-cta');
+  const hero = document.getElementById('hero');
+  const footer = document.querySelector('.footer');
+  if (!cta || !hero) return;
+
+  // Skip on admin/other pages (safety net if included accidentally)
+  if (location.pathname.startsWith('/admin')) return;
+
+  cta.hidden = false;
+  let heroInView = true;
+  let footerInView = false;
+
+  const update = () => {
+    const shouldShow = !heroInView && !footerInView;
+    cta.classList.toggle('is-visible', shouldShow);
+  };
+
+  new IntersectionObserver((entries) => {
+    heroInView = entries[0].isIntersecting;
+    update();
+  }, { threshold: 0.1 }).observe(hero);
+
+  if (footer) {
+    new IntersectionObserver((entries) => {
+      footerInView = entries[0].isIntersecting;
+      update();
+    }, { threshold: 0 }).observe(footer);
+  }
+})();

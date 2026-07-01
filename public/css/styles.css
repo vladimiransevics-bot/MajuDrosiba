@@ -1630,6 +1630,58 @@ a { color: inherit; text-decoration: none; }
   font-size: 12px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Sticky Mobile CTA — floating call+WhatsApp bar on <=767px only
+   ═══════════════════════════════════════════════════════════════════ */
+.mobile-cta {
+  position: fixed;
+  left: 12px; right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 950;
+  display: none;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(10, 22, 40, .92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245,166,35,.15);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.5);
+  transform: translateY(140%);
+  transition: transform .28s cubic-bezier(.2,.7,.3,1);
+}
+.mobile-cta.is-visible { transform: translateY(0); }
+.mobile-cta-btn {
+  flex: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 700; font-size: 14px; letter-spacing: .02em;
+  text-decoration: none;
+  min-height: 44px;
+  transition: transform .15s ease, filter .15s ease;
+}
+.mobile-cta-btn:active { transform: scale(.97); }
+.mobile-cta-btn--call {
+  background: var(--accent);
+  color: #050d1a;
+  box-shadow: 0 4px 12px rgba(245,166,35,.28);
+}
+.mobile-cta-btn--wa {
+  background: #25D366;
+  color: #0a1424;
+  box-shadow: 0 4px 12px rgba(37,211,102,.28);
+}
+.mobile-cta-btn svg { flex-shrink: 0; }
+
+@media (max-width: 767px) {
+  .mobile-cta { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-cta { transition: none; }
+}
+
 /* ── Admin gallery grid ── */
 .gallery-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; min-height: 0; }
 .gallery-thumb-wrap { position: relative; }
