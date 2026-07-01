@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" role="img" aria-label="Teletek">
-  <style>text{font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-weight:800;letter-spacing:2px;fill:#000}</style>
-  <text x="70" y="22" text-anchor="middle" font-size="16">TELETEK</text>
-  <path d="M18 10 Q22 6 26 10 T34 10" fill="none" stroke="#000" stroke-width="1.5"/>
-</svg>
