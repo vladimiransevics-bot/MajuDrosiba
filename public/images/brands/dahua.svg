@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" role="img" aria-label="Dahua">
+  <style>text{font-family:'Inter','Helvetica Neue',Arial,sans-serif;font-weight:800;letter-spacing:1px;fill:#000}</style>
+  <rect x="18" y="10" width="3" height="12" fill="#000"/>
+  <text x="80" y="22" text-anchor="middle" font-size="18">dahua</text>
+</svg>

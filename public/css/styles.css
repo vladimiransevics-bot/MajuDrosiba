@@ -621,6 +621,47 @@ a { color: inherit; text-decoration: none; }
   .bolt-r      { transform: translateX(-14px); }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Trust Strip — brand-partner logos between hero and services
+   ═══════════════════════════════════════════════════════════════════ */
+.trust-strip {
+  padding-block: clamp(28px, 4vh, 40px);
+  background: rgba(10, 22, 40, .35);
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.trust-title {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(232,237,245,.5);
+  margin: 0 0 22px;
+}
+.trust-logos {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: center;
+  gap: clamp(24px, 4vw, 56px);
+}
+.trust-logos li { display: flex; align-items: center; }
+.trust-logo {
+  height: 28px; width: auto;
+  /* Turn any-color SVG into a subtle white by inverting black → white */
+  filter: brightness(0) invert(1) opacity(.55);
+  transition: filter .2s ease, transform .2s ease;
+  display: block;
+}
+.trust-logo:hover {
+  filter: brightness(0) invert(1) opacity(.95);
+  transform: translateY(-2px);
+}
+@media (max-width: 767px) {
+  .trust-logos { gap: 18px; }
+  .trust-logo { height: 22px; }
+}
+
 /* ===== SERVICES ===== */
 .services {
   padding-block: var(--section-pad);
