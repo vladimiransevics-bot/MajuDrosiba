@@ -641,9 +641,32 @@ a { color: inherit; text-decoration: none; }
   padding: 32px;
   position: relative;
   overflow: hidden;
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  transition:
+    transform .25s ease, box-shadow .25s ease, border-color .25s ease,
+    opacity .55s ease-out;
   text-decoration: none;
   color: inherit;
+}
+/* Scroll-reveal — only active when JS enabled (progressive enhancement) */
+.js-scroll-reveal .service-card {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.js-scroll-reveal .service-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Staggered reveal — delay opacity+transform on later cards */
+.js-scroll-reveal .service-card:nth-child(2) { transition-delay: 60ms; }
+.js-scroll-reveal .service-card:nth-child(3) { transition-delay: 120ms; }
+.js-scroll-reveal .service-card:nth-child(4) { transition-delay: 180ms; }
+.js-scroll-reveal .service-card:nth-child(5) { transition-delay: 240ms; }
+.js-scroll-reveal .service-card:nth-child(6) { transition-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js-scroll-reveal .service-card {
+    opacity: 1; transform: none; transition-delay: 0s !important;
+  }
 }
 .service-card::after {
   content: '';

@@ -59,3 +59,32 @@ window.addEventListener('scroll', () => {
 
   els.forEach(el => io.observe(el));
 })();
+
+// Scroll-reveal for service cards: staggered fade+slide when they enter viewport.
+// Progressive enhancement — CSS reveals only apply when the .js-scroll-reveal class
+// is present on the grid (added here), so JS-off users still see all cards.
+(function initScrollReveal() {
+  const grid = document.querySelector('.services-grid');
+  if (!grid) return;
+  grid.classList.add('js-scroll-reveal');
+
+  const cards = grid.querySelectorAll('.service-card');
+  if (!cards.length) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) {
+    cards.forEach(c => c.classList.add('is-visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  cards.forEach(c => io.observe(c));
+})();
