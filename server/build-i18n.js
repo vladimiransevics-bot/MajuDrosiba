@@ -121,6 +121,19 @@ function buildPage(pagePath, lang, dict) {
   ].join('\n  ');
   $('link[rel="canonical"]').after('\n  ' + alts);
 
+  // 5) Rebuild the FAQPage JSON-LD from the now-translated <details> markup
+  const faqScript = $('script[data-faq-schema]');
+  if (faqScript.length) {
+    const mainEntity = $('.faq-list details').map((_, el) => ({
+      '@type': 'Question',
+      name: $(el).find('summary span').first().text().trim(),
+      acceptedAnswer: { '@type': 'Answer', text: $(el).find('p').first().text().trim() },
+    })).get();
+    faqScript.text(JSON.stringify(
+      { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity }, null, 2
+    ));
+  }
+
   const outPath = path.join(PUBLIC, lang, pagePath);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, $.html());
