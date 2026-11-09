@@ -1,17 +1,38 @@
 services:
   - type: web
     name: majudrosiba
-    env: node
-    plan: free
+    runtime: node
+    plan: starter
     region: frankfurt
     rootDir: server
     buildCommand: npm install
     startCommand: node server.js
+    healthCheckPath: /
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: SITE_ORIGIN
+        value: https://majudrosiba.lv
+      - key: DB_PATH
+        value: /var/data/majudrosiba.sqlite
+      - key: UPLOADS_DIR
+        value: /var/data/uploads/products
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: EMAIL_TO
-        value: vladimir.ansevics@gmail.com
+        value: info@majudrosiba.lv
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASS

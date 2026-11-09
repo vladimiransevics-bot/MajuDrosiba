@@ -67,6 +67,12 @@ app.post('/api/admin/login', (req, res) => {
 // ── Admin panel: gate BEFORE static so the HTML is never served unauthenticated ──
 app.use('/admin', requireAuth);
 
+// Admin-uploaded product images live on the persistent disk (Render).
+// Files not found there fall through to the bundled public/uploads below.
+if (process.env.UPLOADS_DIR) {
+  app.use('/uploads/products', express.static(process.env.UPLOADS_DIR, { maxAge: '7d' }));
+}
+
 app.use(express.static(path.join(__dirname, '../public'), {
   etag: true,
   lastModified: true,

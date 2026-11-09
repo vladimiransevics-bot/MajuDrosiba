@@ -3,7 +3,8 @@ const path = require('path');
 const express = require('express');
 const router = express.Router();
 
-const UPLOADS_DIR = path.join(__dirname, '../../public/uploads/products');
+// UPLOADS_DIR points at the persistent disk on Render; locally falls back to public/.
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(__dirname, '../../public/uploads/products');
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const ALLOWED = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);

@@ -1,7 +1,20 @@
 const Database = require('better-sqlite3');
+const fs = require('fs');
 const path = require('path');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'majudrosiba.sqlite');
+
+// On a fresh persistent disk (Render), seed the DB from the catalogue snapshot
+// shipped in the repo. Never overwrites an existing DB.
+if (process.env.DB_PATH && !fs.existsSync(dbPath)) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const seed = path.join(__dirname, 'seed.sqlite');
+  if (fs.existsSync(seed)) {
+    fs.copyFileSync(seed, dbPath);
+    console.log(`[db] seeded ${dbPath} from seed.sqlite`);
+  }
+}
+
 const db = new Database(dbPath);
 
 db.pragma('journal_mode = WAL');
